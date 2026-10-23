@@ -1,35 +1,54 @@
 #!/usr/bin/env python3
-"""Genera las imágenes de images/ (vista previa rápida con matplotlib)."""
-import pathlib, numpy as np, trimesh, matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-ROOT = pathlib.Path(__file__).resolve().parents[1]
-S, I = ROOT / "stl", ROOT / "images"
+"""Genera las imágenes de images/ con pyvista (sin ventana).
 
-def shot(ms, cols, el, az, out, title, zoom=1.0, center=None):
-    fig = plt.figure(figsize=(7, 7)); ax = fig.add_subplot(projection="3d")
-    allb = np.vstack([m.bounds for m in ms]); lo, hi = allb.min(0), allb.max(0)
-    c = (lo+hi)/2 if center is None else np.array(center); r = (hi-lo).max()/2/zoom
-    # luz que sigue a la cámara
-    e, a = np.radians(el), np.radians(az)
-    cam = np.array([np.cos(e)*np.cos(a), np.cos(e)*np.sin(a), np.sin(e)])
-    L = cam + np.array([0, 0, 0.6]); L /= np.linalg.norm(L)
-    for m, col in zip(ms, cols):
-        mm = m if len(m.faces) < 60000 else m.simplify_quadric_decimation(face_count=60000)
-        sh = np.clip(mm.face_normals @ L, 0, 1)*0.7 + 0.3
-        ax.add_collection3d(Poly3DCollection(mm.triangles, facecolors=np.clip(sh[:, None]*np.array(matplotlib.colors.to_rgb(col)), 0, 1), edgecolor="none"))
-    for k, s in enumerate("xyz"): getattr(ax, f"set_{s}lim")(c[k]-r, c[k]+r)
-    ax.set_box_aspect((1, 1, 1)); ax.view_init(el, az); ax.set_axis_off(); ax.set_title(title)
-    fig.text(0.98, 0.02, "BricoHams", ha="right", alpha=0.35, fontsize=14, fontweight="bold")
-    plt.tight_layout(); plt.savefig(out, dpi=90); plt.close()
+    python src/build.py && python src/render_previews.py
+"""
+import sys, pathlib, numpy as np, pyvista as pv
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import build as b, verify as vf
+
+pv.OFF_SCREEN = True
+I = b.ROOT / "images"
+COL = {"soporte": "#9aa0a6", "funda ATU-10": "#5b9bd5", "radio": "#3a3f47", "ATU-10": "#c0c4c8", "batería": "#f0a020"}
+FRONT_LEFT, BACK_RIGHT = (-1.0, -1.3, 0.9), (1.2, 1.4, 0.8)
+
+def mesh(m): return pv.wrap(b.to_tm(m))
+
+def shot(out, solids, views, titles, extra=(), size=(1600, 760)):
+    pl = pv.Plotter(off_screen=True, shape=(1, len(views)), window_size=size)
+    allb = np.array([m.bounding_box() for m in solids.values()])
+    c = (allb[:, :3].min(0) + allb[:, 3:].max(0)) / 2
+    for i, (v, t) in enumerate(zip(views, titles)):
+        pl.subplot(0, i); pl.set_background("white")
+        for n, m in solids.items():
+            pl.add_mesh(mesh(m), color=COL.get(n, "#9aa0a6"), smooth_shading=False)
+        for m, col, op in extra:
+            pl.add_mesh(mesh(m), color=col, opacity=op)
+        pl.camera_position = [tuple(c + np.array(v) * 210), tuple(c), (0, 0, 1)]
+        pl.add_text(t, font_size=10, color="black", position="upper_left")
+        pl.add_text("BricoHams", font_size=12, color="#bbbbbb", position="lower_right")
+    pl.screenshot(I / out); pl.close()
+
+def main():
+    p, env = vf.parts()
+    st, sv, radio, atu = p["soporte"], p["funda ATU-10"], p["radio"], p["ATU-10"]
+    bat2, bat3 = vf.slider_at(p, b.Y_BACK), vf.slider_at(p, b.ATU_Y1)
+    for f in I.glob("*.png"): f.unlink()
+    shot("combo1_trusdx.png", {"soporte": st, "radio": radio}, [FRONT_LEFT, BACK_RIGHT],
+         ["1 · (tr)uSDX solo: extremos con conectores libres", "Vista trasera: ranura DL2MAN vacía"])
+    shot("combo2_trusdx_bateria.png", {"soporte": st, "radio": radio, "batería": bat2}, [FRONT_LEFT, BACK_RIGHT],
+         ["2 · (tr)uSDX + batería", "La batería entra desde arriba en la trasera"])
+    s3 = {"soporte": st, "radio": radio, "funda ATU-10": sv, "ATU-10": atu, "batería": bat3}
+    shot("combo3_trusdx_atu_bateria.png", s3, [FRONT_LEFT, BACK_RIGHT],
+         ["3 · (tr)uSDX + ATU-10 + batería", "Soporte -> funda ATU-10 -> batería"])
+    zones = [(e, "#2ecc71" if not k.startswith("extraer") else "#3498db", 0.25) for k, (_, e) in env.items()]
+    shot("accesos.png", s3, [FRONT_LEFT, BACK_RIGHT],
+         ["Zonas de acceso que deben quedar libres (verde)", "Verde: conectores y mandos"], zones)
+    shot("soporte.png", {"soporte": st}, [(-1.0, -1.2, 0.7), (0.9, 1.5, 0.6)],
+         ["Soporte: labio y pendiente de 50°", "Ranura DL2MAN con tope abajo"], size=(1400, 700))
+    shot("funda_atu10.png", {"funda ATU-10": sv}, [(-1.2, -1.0, 0.6), (1.3, 1.1, 0.6)],
+         ["Funda ATU-10: lengüeta delante, abierta por -X", "Ranura detrás y marco-tope en +X (BNC)"], size=(1400, 700))
+    for f in sorted(I.glob("*.png")): print(f.name)
 
 if __name__ == "__main__":
-    st = trimesh.load(S / "trusdx-stand_battery-rail_BricoHams.stl")
-    sl = trimesh.load(ROOT / "vendor" / "battery-slider.stl"); sl.apply_translation([6-45, 73.8, 28])
-    G, O = "#b8bcc2", "#f0a020"
-    shot([st, sl], [G, O], 25, 35, I/"assembly_back.png", "Soporte KD9WNR + riel + battery-slider DL2MAN")
-    shot([st], [G], 25, 55, I/"stand_rail_back.png", "Riel cola de milano (estándar DL2MAN)")
-    shot([st], [G], 10, 70, I/"rail_detail.png", "Detalle: ranura, tope inferior y marca", zoom=1.7, center=[6, 74, 55])
-    shot([st], [G], 10, 195, I/"stand_side_watermark.png", "Marca de agua lateral")
-    shot([trimesh.load(S/"rail-adapter_glue-on_BricoHams.stl")], ["#5b9bd5"], 60, -70, I/"adapter.png", "Adaptador para pegar")
+    main()

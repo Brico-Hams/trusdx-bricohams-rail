@@ -1,67 +1,92 @@
-# 1 · Proceso de diseño
+# 1 · Proceso de diseño (v3)
 
 ## Objetivo
 
-Integrar la batería 3×18650 en la base del (tr)uSDX de forma **compacta**, **modular** (quitar y poner sin herramientas) y **compatible** con las piezas ya existentes en la comunidad.
+Tres módulos —soporte del (tr)uSDX, batería y ATU-10— que se usan **solos o unidos** sin herramientas, en tres
+combinaciones: (tr)uSDX solo, (tr)uSDX + batería y (tr)uSDX + ATU-10 + batería. Los conectores y mandos de la radio y
+del ATU-10 tienen que quedar accesibles, y ningún módulo puede chocar con otro.
 
-## Análisis de las piezas originales
+## Qué fallaba en la v1 y la v2
 
-Todas las medidas se tomaron directamente de los STL publicados (secciones con `trimesh`).
+Ambas versiones eran un remix del soporte de KD9WNR con un riel para la batería:
 
-### Carcasa DL2MAN
+- **v1** — batería en la trasera del soporte: ocupaba justo el sitio donde KD9WNR pone la funda del ATU-10.
+- **v2** — batería en el lateral izquierdo, de 90 mm de alto: tapaba el extremo izquierdo de la radio, donde están el
+  **jack DC** y el **micro-USB** (CAT/audio). Además, el slider se metía por detrás, donde va la funda del ATU-10.
 
-- Caja de 90 × 60 × 30 mm.
-- `bottom_cover_battery.stl` es una tapa de 90 × 60 × 5 mm con una **ranura de cola de milano** a lo largo de los 60 mm.
-- `battery-slider.stl` es un perfil en U de 90 × 29,5 × 60 mm para un portapilas 3×18650. Por detrás lleva la **lengüeta macho** que entra en esa ranura.
+## Referencias y medidas
 
-### Perfil de cola de milano (estándar DL2MAN)
-
-| Elemento | Ranura (hembra, en la tapa) | Lengüeta (macho, en el slider) |
+| Equipo | Fuente | Datos usados |
 |---|---|---|
-| Ancho en la boca | 27,2 mm | 25,2 mm (cuello) |
-| Ancho en el fondo | 29,2 mm | 27,6 mm (punta) |
-| Profundidad | 3,0 mm | 3,0 mm |
-| Holgura lateral | — | aprox. 0,8–1,0 mm |
-| Detents | 2 cavidades de 0,5 mm a 10 y 50 mm | 2 resaltes de 0,5 mm (Ø2 mm) a 10 y 50 mm |
+| (tr)uSDX en carcasa DL2MAN | STL de la carcasa ([Printables 103619](https://www.printables.com/model/103619)), secciones con `trimesh` | Caja de 90 × 60 × 30 mm. Conectores medidos en las paredes, ver tabla siguiente |
+| Batería 3×18650 | `vendor/battery-slider.stl` (DL2MAN) | Slider de 90 × 29,5 × 60 mm; lengüeta DL2MAN |
+| ATU-10 (N7DDC) | [Repositorio de N7DDC](https://github.com/Dfinitski/ATU-10-10W-QRP-antenna-tuner) y la funda de KD9WNR (hueco interior 71,6 × 27,5 mm) | Caja de aluminio de **100 × 71 × 25 mm**. Panel frontal: OLED de 0,91", botón y USB-C. Panel trasero: BNC TX y ANT |
 
-Los resaltes de la lengüeta encajan en las cavidades de la ranura y producen el **clic** de retención.
+Aberturas de la carcasa DL2MAN (medidas en los STL):
 
-### Soporte KD9WNR
+| Cara de la radio | Aberturas | Uso |
+|---|---|---|
+| Extremo derecho (`right_wall`) | 7 × 7,5 mm + 2 × Ø6,5 mm | Antena (SMA, con adaptador a BNC), MIC/KEY y auriculares/altavoz |
+| Extremo izquierdo (`left_wall`) | Ø6,5 mm + 9 × 4 mm | Alimentación DC y micro-USB (CAT/audio) |
+| Pared larga superior (`upper_wall`) | 6 × 5 mm | Abertura auxiliar: se deja libre |
+| Pared larga inferior (`lower_wall`) | ninguna | Apoya en el labio del soporte |
+| Tapa superior | Ventana OLED 24 × 12,5, encoder Ø8, 3 pulsadores Ø4,5, rejilla | Mandos y pantalla |
+| Tapa inferior | Solo tornillos | Apoya en la pendiente |
 
-- Cuña hueca de 92 × 59 × 90 mm (X: −40…52, Y: 9,8…68,8, Z: 0…90), abierta por abajo y cerrada con `stand-cover.stl`.
-- La **cara trasera** es vertical y plana (y = 68,8) en toda su altura, con paredes de 3 mm.
-- En la trasera hay una **ranura pasacables** en X −24…36 y Z 12,7…18,8.
+> No he podido descargar las fotos de Printables (página protegida contra bots). La posición exacta de cada clavija dentro
+> de los extremos no hace falta: la verificación reserva **el extremo entero** de la radio.
 
-## Decisiones de diseño
+## Decisiones
 
-1. **Reutilizar el estándar DL2MAN** en vez de inventar un riel nuevo. Así el mismo slider sirve en la radio y en la base, y cualquier variante del slider (como la de DL1MAD con cargador USB-C) también encaja.
-2. **Riel vertical en la trasera del soporte.** El slider entra desde arriba y apoya en un tope inferior, de modo que la gravedad también lo mantiene en su sitio. Es la cara más grande y plana, y no interfiere con la radio, la tapa inferior ni el ATU-10.
-3. **Tope en Z = 28 mm.** La batería ocupa Z 28…88 y queda por encima de la ranura pasacables, que sigue libre para llevar los cables al compartimento interior.
-4. **Placa-riel de 70 × 5 mm** (el mismo grosor que `bottom_cover_battery`). Se fusiona con la pared y añade solo 5 mm de fondo.
-5. **Cuña de 45°** bajo la placa para imprimir sin soportes.
-6. **Chaflán de entrada de 0,6 mm** en la boca de la ranura para que el slider entre suave.
-7. **Marca de agua BricoHams:**
-   - Grabada a 0,6 mm en la pared lateral izquierda, visible siempre.
-   - En las bandas laterales del riel: BRICOHAMS y el indicativo (o "(tr)uSDX"), visibles al sacar la batería.
+1. **Un solo estándar de unión: el riel DL2MAN.** La ranura hembra va siempre en una cara trasera vertical; la lengüeta
+   macho, en la cara delantera del módulo siguiente. Como el slider de batería ya lleva esa lengüeta, la batería se
+   engancha igual al soporte, a la funda del ATU-10 o a la tapa `bottom_cover_battery` de la radio.
+2. **Cadena por detrás, nada a los lados.** Los dos extremos de la radio tienen conectores, así que los módulos van detrás:
+   soporte → funda ATU-10 → batería. El soporte mide 90 mm de ancho, lo mismo que la radio.
+3. **Encaje vertical desde arriba.** Cada ranura es ciega abajo (tope a 3 mm de la mesa) y abierta arriba, con la
+   embocadura ensanchada 0,8 mm. Los módulos bajan hasta el tope y los detents (a 10 y 50 mm) hacen clic. La gravedad
+   ayuda a la retención.
+4. **Radio a 50°** sobre una pendiente con un labio de 4 × 8 mm que sujeta la pared inferior (la que no tiene
+   aberturas). La pantalla mira hacia el operador sentado.
+5. **Soporte hueco y abierto por abajo**, con paredes de 3 mm y 5 mm en la placa del riel. Se imprime sin soportes.
+6. **Funda del ATU-10** abierta por el lado de la pantalla, el botón y el USB-C (izquierda). En el lado de los BNC
+   (derecha) lleva un marco de 2 mm con pestañas de esquina que hacen de tope sin tapar los conectores. Los BNC quedan
+   así cerca de la antena de la radio, para un latiguillo corto.
+7. **8 mm libres** entre la pared superior de la radio y la cara trasera del soporte, para la abertura de 6 × 5 mm.
+
+## Perfil del riel (estándar DL2MAN)
+
+| Elemento | Ranura hembra | Lengüeta macho (medida en el slider y copiada en la funda) |
+|---|---|---|
+| Ancho en la boca / cuello | 27,2 mm | 25,0 mm |
+| Ancho máximo | 29,2 mm en el fondo | 28,0 mm a 2 mm de altura (27,7 en la punta) |
+| Profundidad / alto | 3,0 mm | 3,0 mm |
+| Detents | Cavidades Ø2,6 × 0,6 mm a 10 y 50 mm | Resaltes Ø2 × 0,5 mm a 10 y 50 mm |
 
 ## Resultado
 
-- El fondo total del conjunto es de unos 94 mm (soporte 59 + riel 5 + slider 29,5).
-- Comprobación de interferencias con el slider original colocado, hecha con *booleanas* en `manifold3d`:
-  - Asentado: 0,29 mm³, que es contacto coplanario sin interferencia real.
-  - Desplazado 10 mm: unos 2,5 mm³. Es el resalte pasando por el fondo de la ranura, es decir, el clic.
+| Combinación | Huella (ancho × fondo) | Alto |
+|---|---|---|
+| (tr)uSDX solo | 90 × 70 mm (la radio sobresale 14 mm por delante) | 81 mm |
+| (tr)uSDX + batería | 90 × 96 mm | 81 mm |
+| (tr)uSDX + ATU-10 + batería | 103 × 130 mm | 81 mm |
+
+La [verificación](verificacion.md) da **0 mm³ de choque** entre módulos, todas las zonas de acceso libres y los rieles
+reteniendo en las tres uniones.
 
 ## Parámetros (`src/build.py`)
 
 | Parámetro | Valor | Uso |
 |---|---|---|
-| `DT_EXTRA` | 0,0 | Holgura extra por lado. Súbela a +0,1/+0,2 si el slider entra duro |
-| `Z_STOP` | 28 | Altura del tope inferior |
-| `PAD_W`, `PAD_T` | 70, 5 | Tamaño de la placa-riel |
+| `TILT` | 50° | Inclinación de la radio |
+| `DT_EXTRA` | 0,0 | Holgura extra por lado de la ranura. Súbela a +0,1/+0,2 si entra duro |
 | `DIMPLE_DEPTH` | 0,6 | Profundidad de los detents. Súbela para un clic más fuerte |
-| `WM_TEXT` | BRICOHAMS | Texto de la marca de agua |
-| `--call` | — | Indicativo en la banda derecha del riel y en el lateral |
+| `RAIL_Z0` | 3 | Altura del tope de todas las ranuras |
+| `ATU_L`, `ATU_H`, `ATU_T` | 100, 71, 25 | Caja del ATU-10. **Mide la tuya**: cambia según el vendedor |
+| `ATU_CLR` | 0,4 | Holgura por lado de la funda |
+| `--call` | — | Indicativo en el lateral derecho del soporte y en la funda |
 
 ## Herramientas
 
-Python 3, `manifold3d` (booleanas robustas), `trimesh` (lectura y secciones de STL) y `matplotlib` (texto y vistas previas).
+Python 3 con `manifold3d` (booleanas), `trimesh` (lectura y medidas), `scipy` (estabilidad), `matplotlib` (texto) y
+`pyvista` (imágenes).
