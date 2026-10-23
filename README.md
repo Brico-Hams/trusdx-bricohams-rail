@@ -1,57 +1,68 @@
-# (tr)uSDX · Riel de batería modular — BricoHams
+# (tr)uSDX · Sistema modular de riel — BricoHams
 
-Integración compacta y modular para el transceptor QRP **(tr)uSDX**:
+Soporte de mesa para el transceptor QRP **(tr)uSDX** con módulos que se enganchan entre sí sin herramientas:
 
-- **Carcasa** del equipo: *Housing for (tr)uSDX* de **DL2MAN** (sin cambios).
-- **Batería** 3×18650: *battery-slider* de DL2MAN + *Battery Lead Cover* de **KD9WNR** (sin cambios).
-- **Base**: *(tr)uSDX Stand with ATU-10 Enclosure* de **KD9WNR**, **modificada por BricoHams** con un **riel de cola de milano** en la trasera.
+| Módulo | Pieza | Se usa solo | Se engancha |
+|---|---|---|---|
+| **Soporte del (tr)uSDX** | `stl/trusdx-stand_rail_BricoHams.stl` (nuevo) | Sí: la radio a 50°, enganchada por su riel | Lengüeta en la pendiente (radio) + ranura en la trasera |
+| **ATU-10** (N7DDC) | `stl/atu10-sleeve_rail_BricoHams.stl` (nuevo) | Sí: funda de mesa | Lengüeta delante + ranura detrás |
+| **Batería 3×18650** | `stl/battery-3x18650_rail_BricoHams.stl` (nuevo) | Sí, o bajo la radio | Lengüeta DL2MAN; hueco para BMS 3S + cargador USB-C |
 
-El riel usa **exactamente el mismo perfil de cola de milano que la tapa inferior con batería de DL2MAN**
-(`bottom_cover_battery.stl`), con sus detents de clic. El mismo módulo de batería se monta:
+Todas las uniones usan **el mismo riel de cola de milano que DL2MAN** usa para llevar la batería bajo la radio,
+con sus detents de clic. La radio (con la tapa `bottom_cover_battery.stl` de DL2MAN) se desliza por la lengüeta de la
+pendiente hasta el labio. Los demás módulos se encadenan por detrás y se encajan **desde arriba**, hasta un tope:
 
-| Dónde | Pieza que lo recibe |
+| Combinación | Orden (de delante a atrás) |
 |---|---|
-| Directamente en la radio | `bottom_cover_battery.stl` (DL2MAN, original) |
-| En la base / soporte | `trusdx-stand_battery-rail_BricoHams.stl` (este repo) |
-| En un soporte ya impreso | `rail-adapter_glue-on_BricoHams.stl` (este repo, se pega) |
+| (tr)uSDX solo | soporte |
+| (tr)uSDX + batería | soporte → batería |
+| (tr)uSDX + ATU-10 + batería | soporte → funda ATU-10 → batería |
 
-Cambias la batería de la radio a la base (o viceversa) en segundos, sin herramientas.
+![truSDX + ATU-10 + batería](images/combo3_trusdx_atu_bateria.png)
 
-![Montaje](images/assembly_back_left.png)
+Nada se pone a los lados de la radio: sus dos extremos (antena, MIC/KEY y auriculares a la derecha; DC y USB a la izquierda)
+y la cara superior (pantalla, mando y pulsadores) quedan libres en las tres combinaciones. El ATU-10 queda con sus BNC a la
+derecha, junto a la antena de la radio, y su pantalla, botón y USB-C a la izquierda.
+Ver la [comprobación de choques y accesos](docs/verificacion.md).
 
-## Piezas a imprimir
-
-| STL | Origen | Notas |
+| (tr)uSDX solo | (tr)uSDX + batería | Zonas de acceso comprobadas |
 |---|---|---|
-| `stl/trusdx-stand_battery-rail_BricoHams.stl` | **Nuevo** (remix KD9WNR) | Soporte con riel, tope y marca de agua |
-| `stl/rail-adapter_glue-on_BricoHams.stl` | **Nuevo** | Opcional: riel suelto para pegar a un soporte ya impreso |
-| `battery-slider.stl` *o* `battery-slider-witchusbcharger_dl1mad.stl` | DL2MAN / DL1MAD | Portapilas deslizante (descargar del original) |
-| `trusdx-battery-lead-shroud.stl` | KD9WNR | Protector de los cables del portapilas |
-| `stand-cover.stl`, `atu-10-enclosure.stl` | KD9WNR | Sin cambios |
-| Carcasa completa | DL2MAN | Sin cambios |
+| ![](images/combo1_trusdx.png) | ![](images/combo2_trusdx_bateria.png) | ![](images/accesos.png) |
 
-`stl/_assembly_preview_DO-NOT-PRINT.stl` es solo para ver el conjunto montado.
+| Soporte | Batería con hueco para BMS y cargador | Funda ATU-10 |
+|---|---|---|
+| ![](images/soporte.png) | ![](images/bateria.png) | ![](images/funda_atu10.png) |
 
 ## Documentación
 
 1. [Proceso de diseño y medidas](docs/01_proceso_diseno.md)
 2. [Impresión](docs/02_impresion.md)
-3. [Montaje y cableado](docs/03_montaje.md)
-4. [Atribución y licencias](ATTRIBUTION.md)
+3. [Montaje, cableado y materiales](docs/03_montaje.md)
+4. [Verificación de choques y accesos](docs/verificacion.md)
+5. [Atribución y licencias](ATTRIBUTION.md)
 
 ## Regenerar las piezas
 
+Las piezas se modelan en **Fusion 360**:
+
+1. Ajusta las medidas en `src/dims.py` (inclinación, holguras del riel, medidas del ATU-10, `CALL` = tu indicativo
+   para la marca de agua).
+2. En Fusion 360: *Utilidades > Scripts y complementos > +* y elige `fusion/trusdx_rail_fusion.py`. Crea un diseño nuevo
+   con los dos componentes y su historial, y exporta `stl/*.stl` y `step/*.step`.
+3. Verifica y regenera las imágenes (Python solo comprueba; no modela):
+
 ```bash
 pip install -r requirements.txt
-python src/build.py --call EA4XXX     # tu indicativo en la marca de agua (opcional)
+python src/verify.py                  # choques, accesos, rieles y estabilidad -> docs/verificacion.md
 python src/render_previews.py         # imágenes de images/
 ```
 
-Los parámetros (holguras, altura del tope, grosor…) están al principio de `src/build.py`.
+> **Versiones anteriores:** la v1 (riel en la trasera del soporte KD9WNR) y la v2 (riel en el lateral izquierdo) dejaban
+> la batería tapando los conectores DC/USB de la radio o el sitio del ATU-10. Esta v3 lo resuelve con la cadena por detrás.
 
 ## Licencia
 
-Las piezas nuevas y modificadas: **CC BY-NC-SA 4.0** — ver [LICENSE.md](LICENSE.md).
+Las piezas nuevas: **CC BY-NC-SA 4.0** — ver [LICENSE.md](LICENSE.md).
 Las piezas originales mantienen la licencia de sus autores — ver [ATTRIBUTION.md](ATTRIBUTION.md).
 
 ---
