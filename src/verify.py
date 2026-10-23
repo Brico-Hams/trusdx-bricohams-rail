@@ -2,7 +2,8 @@
 """
 Comprobación de choques y accesos para cada combinación de módulos.
 
-    python src/build.py && python src/verify.py
+    (modela las piezas en Fusion 360 con fusion/trusdx_rail_fusion.py)
+    python src/verify.py
 
 Usa las piezas generadas en stl/, vendor/battery-slider.stl (DL2MAN) y modelos simplificados
 (cajas) de la radio y del ATU-10. Para cada combinación comprueba:
@@ -15,7 +16,7 @@ Sale con código 1 si algo falla.
 import sys, pathlib, numpy as np, trimesh
 from scipy.spatial import ConvexHull
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-import build as b
+import geom as b
 
 S = b.OUT
 ENV = 40.0        # largo de las zonas de acceso de los conectores (clavija + curva del cable)

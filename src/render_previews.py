@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Genera las imágenes de images/ con pyvista (sin ventana).
 
-    python src/build.py && python src/render_previews.py
+    python src/render_previews.py
 """
 import sys, pathlib, numpy as np, pyvista as pv
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-import build as b, verify as vf
+import geom as b, verify as vf
 
 pv.OFF_SCREEN = True
 I = b.ROOT / "images"

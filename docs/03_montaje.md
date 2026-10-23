@@ -10,6 +10,9 @@
 | `trusdx-battery-lead-shroud.stl` ([Printables 1097625](https://www.printables.com/model/1097625)) | KD9WNR · CC BY-NC 4.0 | 1 | Con batería (opcional) |
 | Carcasa completa del (tr)uSDX, con `bottom_cover.stl` o `bottom_cover_battery.stl` | DL2MAN · CC BY-SA 4.0 | 1 | Todas |
 
+Las piezas BricoHams también están en STEP (`step/`) para modificarlas en cualquier CAD; el modelo de origen es
+`fusion/trusdx_rail_fusion.py` (Fusion 360).
+
 ## Materiales
 
 | Material | Cant. | Notas |

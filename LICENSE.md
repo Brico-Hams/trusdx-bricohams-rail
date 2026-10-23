@@ -1,6 +1,6 @@
 # Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
 
-© BricoHams — piezas nuevas o modificadas de este repositorio (`stl/*_BricoHams.stl`, `src/`, `images/`, `docs/`).
+© BricoHams — piezas nuevas o modificadas de este repositorio (`stl/*_BricoHams.stl`, `step/*_BricoHams.step`, `fusion/`, `src/`, `images/`, `docs/`).
 
 Puedes:
 - **Compartir**: copiar y redistribuir el material en cualquier medio o formato.

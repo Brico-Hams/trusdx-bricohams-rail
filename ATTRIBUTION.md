@@ -14,7 +14,7 @@ PCB, esquemas y firmware del (tr)uSDX son de DL2MAN y PE1NNZ, bajo sus propias l
 
 ## Licencia de las piezas nuevas
 
-`stl/*_BricoHams.stl`, `src/`, `images/` y `docs/`: **CC BY-NC-SA 4.0**, © BricoHams.
+`stl/*_BricoHams.stl`, `step/*_BricoHams.step`, `fusion/`, `src/`, `images/` y `docs/`: **CC BY-NC-SA 4.0**, © BricoHams.
 
 Se mantiene NC (no comercial) y SA, como en las versiones anteriores, para seguir el espíritu abierto del ecosistema
 DL2MAN y KD9WNR.

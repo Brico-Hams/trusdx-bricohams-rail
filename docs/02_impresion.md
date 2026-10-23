@@ -19,7 +19,7 @@ Temperaturas orientativas de PETG: boquilla a 235–245 °C, cama a 75–80 °C 
   milano son de 3 mm y salen bien sin soportes.
 - **Prueba de ajuste:** antes de imprimir las piezas grandes, imprime solo la parte baja del soporte (en el laminador,
   corta a 25 mm de altura) y prueba el slider en los primeros 20 mm de la ranura.
-  - Si entra duro, sube `DT_EXTRA` a 0,1–0,2 y regenera.
+  - Si entra duro, sube `DT_EXTRA` (en `src/dims.py`) a 0,1–0,2 y vuelve a ejecutar el script de Fusion 360.
   - Si queda flojo y el clic no se nota, sube `DIMPLE_DEPTH` a 0,8.
 - **Funda del ATU-10:** mide tu ATU-10 antes de imprimir y ajusta `ATU_L`, `ATU_H` y `ATU_T`. Debe entrar a mano con un
   ligero roce. Si queda floja, pega una tira de fieltro en el fondo de la funda.

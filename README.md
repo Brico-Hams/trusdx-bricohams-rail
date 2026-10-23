@@ -38,14 +38,19 @@ Ver la [comprobación de choques y accesos](docs/verificacion.md).
 
 ## Regenerar las piezas
 
+Las piezas se modelan en **Fusion 360**:
+
+1. Ajusta las medidas en `src/dims.py` (inclinación, holguras del riel, medidas del ATU-10, `CALL` = tu indicativo
+   para la marca de agua).
+2. En Fusion 360: *Utilidades > Scripts y complementos > +* y elige `fusion/trusdx_rail_fusion.py`. Crea un diseño nuevo
+   con los dos componentes y su historial, y exporta `stl/*.stl` y `step/*.step`.
+3. Verifica y regenera las imágenes (Python solo comprueba; no modela):
+
 ```bash
 pip install -r requirements.txt
-python src/build.py --call EA4XXX     # tu indicativo en la marca de agua (opcional)
 python src/verify.py                  # choques, accesos, rieles y estabilidad -> docs/verificacion.md
 python src/render_previews.py         # imágenes de images/
 ```
-
-Los parámetros (inclinación, holguras del riel, medidas del ATU-10…) están al principio de `src/build.py`.
 
 > **Versiones anteriores:** la v1 (riel en la trasera del soporte KD9WNR) y la v2 (riel en el lateral izquierdo) dejaban
 > la batería tapando los conectores DC/USB de la radio o el sitio del ATU-10. Esta v3 lo resuelve con la cadena por detrás.

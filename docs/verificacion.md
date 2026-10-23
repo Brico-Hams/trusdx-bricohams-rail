@@ -25,7 +25,7 @@ Generado por `python src/verify.py`. Radio y ATU-10 son modelos simplificados (c
 | Resultado | Comprobación | Valor |
 |---|---|---|
 | OK | choque soporte / radio | 0.00 mm³ |
-| OK | choque soporte / batería | 0.29 mm³ |
+| OK | choque soporte / batería | 0.26 mm³ |
 | OK | choque radio / batería | 0.00 mm³ |
 | OK | acceso libre: radio: pantalla, mando y pulsadores | 0 mm³ |
 | OK | acceso libre: radio: DC + USB (extremo izq.) | 0 mm³ |
@@ -46,7 +46,7 @@ Generado por `python src/verify.py`. Radio y ATU-10 son modelos simplificados (c
 | OK | choque radio / ATU-10 | 0.00 mm³ |
 | OK | choque radio / batería | 0.00 mm³ |
 | OK | choque funda ATU-10 / ATU-10 | 0.00 mm³ |
-| OK | choque funda ATU-10 / batería | 0.29 mm³ |
+| OK | choque funda ATU-10 / batería | 0.26 mm³ |
 | OK | choque ATU-10 / batería | 0.00 mm³ |
 | OK | acceso libre: radio: pantalla, mando y pulsadores | 0 mm³ |
 | OK | acceso libre: radio: DC + USB (extremo izq.) | 0 mm³ |
@@ -71,7 +71,7 @@ Generado por `python src/verify.py`. Radio y ATU-10 son modelos simplificados (c
 
 | Resultado | Comprobación | Valor |
 |---|---|---|
-| OK | soporte -> batería: asentado sin choque | 0.29 mm³ |
+| OK | soporte -> batería: asentado sin choque | 0.26 mm³ |
 | OK | soporte -> batería: retiene al tirar hacia atrás 1,5 mm (cola de milano) | 13 mm³ |
 | OK | soporte -> batería: tope al empujar 1 mm hacia abajo | 35 mm³ |
 | OK | soporte -> batería: clic de los detents al subir 5 mm | 2.54 mm³ |
@@ -79,9 +79,9 @@ Generado por `python src/verify.py`. Radio y ATU-10 son modelos simplificados (c
 | OK | soporte -> funda ATU-10: asentado sin choque | 0.00 mm³ |
 | OK | soporte -> funda ATU-10: retiene al tirar hacia atrás 1,5 mm (cola de milano) | 12 mm³ |
 | OK | soporte -> funda ATU-10: tope al empujar 1 mm hacia abajo | 81 mm³ |
-| OK | soporte -> funda ATU-10: clic de los detents al subir 5 mm | 1.26 mm³ |
-| OK | soporte -> funda ATU-10: camino de inserción libre desde arriba (solo roce de detents) | máx 1.26 mm³ |
-| OK | funda ATU-10 -> batería: asentado sin choque | 0.29 mm³ |
+| OK | soporte -> funda ATU-10: clic de los detents al subir 5 mm | 1.28 mm³ |
+| OK | soporte -> funda ATU-10: camino de inserción libre desde arriba (solo roce de detents) | máx 1.28 mm³ |
+| OK | funda ATU-10 -> batería: asentado sin choque | 0.26 mm³ |
 | OK | funda ATU-10 -> batería: retiene al tirar hacia atrás 1,5 mm (cola de milano) | 13 mm³ |
 | OK | funda ATU-10 -> batería: tope al empujar 1 mm hacia abajo | 35 mm³ |
 | OK | funda ATU-10 -> batería: clic de los detents al subir 5 mm | 2.54 mm³ |

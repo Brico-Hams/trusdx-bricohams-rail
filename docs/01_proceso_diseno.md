@@ -74,7 +74,9 @@ Aberturas de la carcasa DL2MAN (medidas en los STL):
 La [verificación](verificacion.md) da **0 mm³ de choque** entre módulos, todas las zonas de acceso libres y los rieles
 reteniendo en las tres uniones.
 
-## Parámetros (`src/build.py`)
+## Parámetros (`src/dims.py`)
+
+Los usan el modelo de Fusion 360 (`fusion/trusdx_rail_fusion.py`) y la verificación (`src/verify.py`).
 
 | Parámetro | Valor | Uso |
 |---|---|---|
@@ -84,9 +86,11 @@ reteniendo en las tres uniones.
 | `RAIL_Z0` | 3 | Altura del tope de todas las ranuras |
 | `ATU_L`, `ATU_H`, `ATU_T` | 100, 71, 25 | Caja del ATU-10. **Mide la tuya**: cambia según el vendedor |
 | `ATU_CLR` | 0,4 | Holgura por lado de la funda |
-| `--call` | — | Indicativo en el lateral derecho del soporte y en la funda |
+| `CALL` | `None` | Indicativo en el lateral derecho del soporte y en la funda |
 
 ## Herramientas
 
-Python 3 con `manifold3d` (booleanas), `trimesh` (lectura y medidas), `scipy` (estabilidad), `matplotlib` (texto) y
-`pyvista` (imágenes).
+- **Fusion 360** para el modelo: bocetos, extrusiones, vaciado, loft de la embocadura, revoluciones de los detents y
+  texto grabado, con historial paramétrico. Exporta STL (impresión) y STEP (para editar en cualquier CAD).
+- **Python 3** solo para medir y verificar: `trimesh` (lectura y medidas de los STL originales), `manifold3d`
+  (booleanas de interferencia), `scipy` (estabilidad) y `pyvista` (imágenes).
