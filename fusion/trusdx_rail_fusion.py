@@ -56,9 +56,9 @@ def extrude(comp, prof, dist_mm, op, bodies=None, symmetric=False):
     return comp.features.extrudeFeatures.add(ei)
 
 def sphere(comp, center, r, op, bodies=None):
-    """Esfera por revolución de un semicírculo en el plano YZ (los centros están en x=0)."""
+    """Esfera por revolución de un semicírculo en un plano paralelo a YZ que pasa por el centro."""
     x, y, z = center
-    sk = comp.sketches.add(comp.yZConstructionPlane)
+    sk = comp.sketches.add(plane_at(comp, comp.yZConstructionPlane, x))
     top, bot, c = (sk.modelToSketchSpace(P(x, y, z + r)), sk.modelToSketchSpace(P(x, y, z - r)),
                    sk.modelToSketchSpace(P(x, y, z)))
     sk.sketchCurves.sketchArcs.addByCenterStartSweep(c, top, math.pi)
@@ -88,14 +88,37 @@ def rail_slot(comp, body, yf, z_top):
     for z in D.DIMPLE_AT:
         sphere(comp, (0, yf - D.DT_DEPTH - D.DIMPLE_DEPTH + r, z0 + z), r, OP.CutFeatureOperation, [body])
 
-def rail_tongue(comp, body, yf):
-    """Lengüeta macho DL2MAN en la cara y=yf, hacia -Y, con los resaltes de los detents."""
-    z0 = D.RAIL_Z0
-    sk = sketch_poly(comp, plane_at(comp, comp.xYConstructionPlane, z0), [(x, y, z0) for x, y in D.tongue_profile(yf)])
+def rail_tongue(comp, body, yf, z0=D.RAIL_Z0, xc=0.0):
+    """Lengüeta macho DL2MAN vertical (z0..z0+60) en la cara y=yf, hacia -Y, centrada en x=xc, con resaltes."""
+    sk = sketch_poly(comp, plane_at(comp, comp.xYConstructionPlane, z0),
+                     [(xc + x, y, z0) for x, y in D.tongue_profile(yf)])
     extrude(comp, sk.profiles.item(0), D.SLIDE_LEN, OP.JoinFeatureOperation, [body])
     r = D.BUMP_D / 2
     for z in D.DIMPLE_AT:
-        sphere(comp, (0, yf - D.TG_DEPTH - D.BUMP_H + r, z0 + z), r, OP.JoinFeatureOperation, [body])
+        sphere(comp, (xc, yf - D.TG_DEPTH - D.BUMP_H + r, z0 + z), r, OP.JoinFeatureOperation, [body])
+
+def radio_tongue(comp, body):
+    """Lengüeta DL2MAN sobre la pendiente del soporte (eje U, u 0..60) para la ranura de bottom_cover_battery.
+       El perfil (x, v) es el de tongue_profile con v = -y; el labio hace de tope en u=0."""
+    t = math.radians(D.TILT)
+    pi = comp.constructionPlanes.createInput()        # plano por el origen, perpendicular a U
+    pi.setByAngle(comp.xConstructionAxis, VI(t), comp.xZConstructionPlane)
+    base = comp.constructionPlanes.add(pi)
+    nrm = base.geometry.normal
+    sgn = 1 if nrm.y * D.U[0] + nrm.z * D.U[1] > 0 else -1
+    u0 = D.R_RAIL_U0
+    off = (D.P0[0] * D.U[0] + D.P0[1] * D.U[1]) + u0   # distancia del plano base al extremo u0 de la lengüeta
+    plane = plane_at(comp, base, sgn * off)
+    pts = []
+    for x, y in D.tongue_profile(0.0):
+        yy, zz = D.radio_pt(u0, -y)
+        pts.append((x, yy, zz))
+    sk = sketch_poly(comp, plane, pts)
+    extrude(comp, sk.profiles.item(0), sgn * D.SLIDE_LEN, OP.JoinFeatureOperation, [body])
+    r = D.BUMP_D / 2
+    for u in D.DIMPLE_AT:
+        yy, zz = D.radio_pt(u0 + u, D.TG_DEPTH + D.BUMP_H - r)
+        sphere(comp, (0, yy, zz), r, OP.JoinFeatureOperation, [body])
 
 def planar_face(body, normal, coord_axis, coord):
     for f in body.faces:
@@ -139,6 +162,7 @@ def stand(root):
     sk = sketch_poly(comp, comp.yZConstructionPlane, [(0, yp, 0), (0, D.Y_BACK, 0), (0, D.Y_BACK, D.Z_BACK), (0, yp, zp)])
     extrude(comp, sk.profiles.item(0), D.ST_W, OP.JoinFeatureOperation, [body], symmetric=True)
     rail_slot(comp, body, D.Y_BACK, D.Z_BACK)
+    radio_tongue(comp, body)
     # marcas de agua en los laterales, en la franja baja bajo la radio
     yc, z = D.Y_BACK / 2 + 2, 5.0
     engrave(comp, body, planar_face(body, (-1, 0, 0), "x", -D.ST_W / 2), D.WM_TEXT, 5.0,
@@ -170,6 +194,41 @@ def atu_sleeve(root):
             (-40, yc, D.ATU_Z1), (40, yc, D.ATU_Z1))
     return comp, body
 
+def plane_world(comp, base, axis, coord):
+    """Plano paralelo a `base` que pasa por `axis`=coord (mm) en coordenadas del modelo, sea cual sea su normal."""
+    n = base.geometry.normal
+    return plane_at(comp, base, coord * (1 if getattr(n, axis) > 0 else -1))
+
+def battery(root):
+    """Módulo de batería 3x18650 en coordenadas del slider (x largo, y fondo, z deslizamiento = altura de
+       impresión): lengüeta DL2MAN, hueco para BMS + cargador USB-C, portapilas con labios y pasos de cables."""
+    comp = new_component(root, "battery-3x18650_rail")
+    sk = sketch_poly(comp, comp.xYConstructionPlane, [(x, y, 0) for x, y in D.battery_profile()])
+    body = extrude(comp, sk.profiles.item(0), D.SLIDE_LEN, OP.NewBodyFeatureOperation).bodies.item(0)
+    body.name = "batería 3x18650"
+    rail_tongue(comp, body, 0.0, z0=0.0, xc=D.BAT_L / 2)
+    w = (D.BAT_L - D.BAT_HOLDER_L) / 2
+    y0, y1 = D.BAT_PLATE, D.BAT_PLATE + D.BAT_CAV_H
+    # hueco del BMS y del cargador, abierto por arriba
+    z0 = D.BAT_CAV_Z0
+    sk = sketch_poly(comp, plane_at(comp, comp.xYConstructionPlane, z0),
+                     [(w, y0, z0), (D.BAT_L - w, y0, z0), (D.BAT_L - w, y1, z0), (w, y1, z0)])
+    extrude(comp, sk.profiles.item(0), D.SLIDE_LEN, OP.CutFeatureOperation, [body])
+    # salida de cables por la pared izquierda (x=0), hacia el DC de la radio
+    zc, h = D.SLIDE_LEN / 2, D.BAT_LEAD_W / 2
+    sk = sketch_poly(comp, plane_world(comp, comp.yZConstructionPlane, "x", -1),
+                     [(-1, y0, zc - h), (-1, y1, zc - h), (-1, y1, zc + h), (-1, y0, zc + h)])
+    extrude(comp, sk.profiles.item(0), 2 * w + 2, OP.CutFeatureOperation, [body], symmetric=True)  # x -w-2..w
+    # pasos de cables del hueco al portapilas, junto a cada extremo
+    ym = y1 + D.BAT_FLOOR / 2
+    wx, wz = D.BAT_WIRE
+    for xa in (w + 1, D.BAT_L - w - 1 - wx):
+        sk = sketch_poly(comp, plane_world(comp, comp.xZConstructionPlane, "y", ym),
+                         [(xa, ym, D.BAT_WIRE_Z - wz / 2), (xa + wx, ym, D.BAT_WIRE_Z - wz / 2),
+                          (xa + wx, ym, D.BAT_WIRE_Z + wz / 2), (xa, ym, D.BAT_WIRE_Z + wz / 2)])
+        extrude(comp, sk.profiles.item(0), D.BAT_FLOOR + 1, OP.CutFeatureOperation, [body], symmetric=True)
+    return comp, body
+
 def export(design, comp, body, name):
     em = design.exportManager
     (REPO / "stl").mkdir(exist_ok=True); (REPO / "step").mkdir(exist_ok=True)
@@ -186,7 +245,8 @@ def run(_context: str):
     design.designType = adsk.fusion.DesignTypes.ParametricDesignType
     design.fusionUnitsManager.distanceDisplayUnits = adsk.fusion.DistanceUnits.MillimeterDistanceUnits
     root = design.rootComponent
-    for build, name in ((stand, "trusdx-stand_rail"), (atu_sleeve, "atu10-sleeve_rail")):
+    for build, name in ((stand, "trusdx-stand_rail"), (atu_sleeve, "atu10-sleeve_rail"),
+                        (battery, "battery-3x18650_rail")):
         comp, body = build(root)
         export(design, comp, body, name)
         bb = body.boundingBox

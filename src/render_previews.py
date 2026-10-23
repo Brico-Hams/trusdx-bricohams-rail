@@ -45,7 +45,10 @@ def main():
     shot("accesos.png", s3, [FRONT_LEFT, BACK_RIGHT],
          ["Zonas de acceso que deben quedar libres (verde)", "Verde: conectores y mandos"], zones)
     shot("soporte.png", {"soporte": st}, [(-1.0, -1.2, 0.7), (0.9, 1.5, 0.6)],
-         ["Soporte: labio y pendiente de 50°", "Ranura DL2MAN con tope abajo"], size=(1400, 700))
+         ["Soporte: lengüeta DL2MAN para la radio y labio-tope", "Ranura DL2MAN trasera con tope abajo"], size=(1400, 700))
+    shot("bateria.png", {"batería": b.to_mf(p["_batería"])}, [(0.6, 1.3, 1.1), (-0.8, -1.3, 0.5)],
+         ["Batería 3x18650: hueco BMS + cargador USB-C abierto arriba", "Lengüeta DL2MAN y salida de cables (izq.)"],
+         size=(1400, 700))
     shot("funda_atu10.png", {"funda ATU-10": sv}, [(-1.2, -1.0, 0.6), (1.3, 1.1, 0.6)],
          ["Funda ATU-10: lengüeta delante, abierta por -X", "Ranura detrás y marco-tope en +X (BNC)"], size=(1400, 700))
     for f in sorted(I.glob("*.png")): print(f.name)

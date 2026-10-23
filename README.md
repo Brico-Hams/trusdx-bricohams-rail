@@ -4,12 +4,13 @@ Soporte de mesa para el transceptor QRP **(tr)uSDX** con módulos que se enganch
 
 | Módulo | Pieza | Se usa solo | Se engancha |
 |---|---|---|---|
-| **Soporte del (tr)uSDX** | `stl/trusdx-stand_rail_BricoHams.stl` (nuevo) | Sí: la radio apoyada a 50° | Ranura DL2MAN en la trasera |
+| **Soporte del (tr)uSDX** | `stl/trusdx-stand_rail_BricoHams.stl` (nuevo) | Sí: la radio a 50°, enganchada por su riel | Lengüeta en la pendiente (radio) + ranura en la trasera |
 | **ATU-10** (N7DDC) | `stl/atu10-sleeve_rail_BricoHams.stl` (nuevo) | Sí: funda de mesa | Lengüeta delante + ranura detrás |
-| **Batería 3×18650** | `battery-slider.stl` de DL2MAN (original) | Sí, o en la radio con `bottom_cover_battery.stl` | Su lengüeta DL2MAN |
+| **Batería 3×18650** | `stl/battery-3x18650_rail_BricoHams.stl` (nuevo) | Sí, o bajo la radio | Lengüeta DL2MAN; hueco para BMS 3S + cargador USB-C |
 
 Todas las uniones usan **el mismo riel de cola de milano que DL2MAN** usa para llevar la batería bajo la radio,
-con sus detents de clic. Los módulos se encadenan por detrás y se encajan **desde arriba**, hasta un tope:
+con sus detents de clic. La radio (con la tapa `bottom_cover_battery.stl` de DL2MAN) se desliza por la lengüeta de la
+pendiente hasta el labio. Los demás módulos se encadenan por detrás y se encajan **desde arriba**, hasta un tope:
 
 | Combinación | Orden (de delante a atrás) |
 |---|---|
@@ -27,6 +28,10 @@ Ver la [comprobación de choques y accesos](docs/verificacion.md).
 | (tr)uSDX solo | (tr)uSDX + batería | Zonas de acceso comprobadas |
 |---|---|---|
 | ![](images/combo1_trusdx.png) | ![](images/combo2_trusdx_bateria.png) | ![](images/accesos.png) |
+
+| Soporte | Batería con hueco para BMS y cargador | Funda ATU-10 |
+|---|---|---|
+| ![](images/soporte.png) | ![](images/bateria.png) | ![](images/funda_atu10.png) |
 
 ## Documentación
 

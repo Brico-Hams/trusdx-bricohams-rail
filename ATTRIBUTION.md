@@ -4,8 +4,8 @@ Este proyecto se apoya en trabajos de la comunidad. Todos los créditos van a su
 
 | Obra | Autor | Enlace | Licencia | Uso en este repo |
 |---|---|---|---|---|
-| Housing for (tr)uSDX QRP Transceiver | **DL2MAN** | https://www.printables.com/model/103619 | CC BY-SA 4.0 | **Perfil de cola de milano** medido de `bottom_cover_battery.stl` y `battery-slider.stl`, para ser compatible. Medidas de la carcasa y sus aberturas. `vendor/battery-slider.stl` se incluye sin modificar para la verificación y las imágenes |
-| (tr)uSDX Battery Lead Cover | **Jim, KD9WNR** | https://www.printables.com/model/1097625 | CC BY-NC 4.0 | Opcional, sin modificar (descárgalo del original) |
+| Housing for (tr)uSDX QRP Transceiver | **DL2MAN** | https://www.printables.com/model/103619 | CC BY-SA 4.0 | **Perfil de cola de milano** medido de `bottom_cover_battery.stl` y `battery-slider.stl`, para ser compatible. Medidas de la carcasa y sus aberturas, y del hueco del portapilas del slider. `vendor/bottom_cover_battery.stl` y `vendor/battery-slider.stl` se incluyen sin modificar para la verificación |
+| (tr)uSDX Battery Lead Cover | **Jim, KD9WNR** | https://www.printables.com/model/1097625 | CC BY-NC 4.0 | Usado en v1/v2; la batería v3 lleva su propia salida de cables |
 | (tr)uSDX Stand with ATU-10 Enclosure | **Jim, KD9WNR** (inspirado en W5AUG) | https://www.printables.com/model/737296 | CC BY-NC 4.0 | Base de las versiones v1 y v2 de este repo. La v3 no usa su geometría; de su funda se tomó la referencia del hueco del ATU-10 |
 | Battery slider with USB-C charger | **DL1MAD** (remix de DL2MAN) | https://www.printables.com/model/1339609 | CC BY-SA 4.0 | Compatible sin cambios |
 | ATU-10 | **N7DDC** (David Fainitski) | https://github.com/Dfinitski/ATU-10-10W-QRP-antenna-tuner | — | Medidas de la caja (100 × 71 × 25 mm) y disposición de los paneles |

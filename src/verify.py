@@ -5,7 +5,8 @@ Comprobación de choques y accesos para cada combinación de módulos.
     (modela las piezas en Fusion 360 con fusion/trusdx_rail_fusion.py)
     python src/verify.py
 
-Usa las piezas generadas en stl/, vendor/battery-slider.stl (DL2MAN) y modelos simplificados
+Usa las piezas de Fusion 360 en stl/, vendor/bottom_cover_battery.stl bajo la radio, vendor/battery-slider.stl
+(DL2MAN, prueba de compatibilidad) y modelos simplificados
 (cajas) de la radio y del ATU-10. Para cada combinación comprueba:
   - que ninguna pieza se mete en otra (volumen de intersección),
   - que las zonas de acceso de conectores y mandos (cajas delante de cada cara) están libres,
@@ -35,31 +36,41 @@ def tilted(u0, u1, v0, v1, x0, x1):
 def load(name):
     return b.to_mf(trimesh.load(S / name))
 
+RH = b.R_T + b.R_COVER_T   # carcasa + bottom_cover_battery (estimación conservadora)
+
+def radio():
+    """Radio: tapa bottom_cover_battery real (su ranura recibe la lengüeta del soporte) + carcasa en caja."""
+    f = b.VENDOR / "bottom_cover_battery.stl"
+    if not f.exists():
+        sys.exit("falta vendor/bottom_cover_battery.stl (DL2MAN): hace falta para comprobar el riel de la radio")
+    t = trimesh.load(f)   # x 0..90, y 0..60 (ranura), z 0..5 con la boca de la ranura en z=0
+    t.apply_transform([[1, 0, 0, -b.R_L/2], [0, b.U[0], b.N[0], b.P0[0]], [0, b.U[1], b.N[1], b.P0[1]], [0, 0, 0, 1]])
+    return b.to_mf(t) + tilted(0, b.R_W, b.R_COVER_T, RH, -b.R_L/2, b.R_L/2)
+
 def parts():
     p = {"soporte": load("trusdx-stand_rail_BricoHams.stl"),
          "funda ATU-10": load("atu10-sleeve_rail_BricoHams.stl"),
-         "radio": tilted(0, b.R_W, 0, b.R_T, -b.R_L/2, b.R_L/2)}
+         "_batería": trimesh.load(S / "battery-3x18650_rail_BricoHams.stl"),
+         "radio": radio()}
     ax1 = b.ATU_XI; ax0 = ax1 - b.ATU_L
     ay0, az0 = b.ATU_YC0 + b.ATU_CLR, b.ATU_ZC0 + b.ATU_CLR
     p["ATU-10"] = b.box(ax0, ax1, ay0, ay0 + b.ATU_T, az0, az0 + b.ATU_H)
     sl = b.VENDOR / "battery-slider.stl"
-    p["_slider"] = trimesh.load(sl) if sl.exists() else None
+    p["_dl2man"] = trimesh.load(sl) if sl.exists() else None
     i = 3.5   # las zonas de los paneles del ATU-10 dejan fuera las pestañas de esquina del marco
     env = {
-        "radio: pantalla, mando y pulsadores": ("radio", tilted(0, b.R_W, b.R_T, b.R_T + ENV_TOP, -b.R_L/2, b.R_L/2)),
-        "radio: DC + USB (extremo izq.)": ("radio", tilted(0, b.R_W, 0, b.R_T, -b.R_L/2 - ENV, -b.R_L/2)),
-        "radio: antena + MIC/KEY + auric. (extremo der.)": ("radio", tilted(0, b.R_W, 0, b.R_T, b.R_L/2, b.R_L/2 + ENV)),
-        "radio: abertura pared superior": ("radio", tilted(b.R_W, b.R_W + ENV_BACK, 0, b.R_T, -b.R_L/2, b.R_L/2)),
+        "radio: pantalla, mando y pulsadores": ("radio", tilted(0, b.R_W, RH, RH + ENV_TOP, -b.R_L/2, b.R_L/2)),
+        "radio: DC + USB (extremo izq.)": ("radio", tilted(0, b.R_W, 0, RH, -b.R_L/2 - ENV, -b.R_L/2)),
+        "radio: antena + MIC/KEY + auric. (extremo der.)": ("radio", tilted(0, b.R_W, 0, RH, b.R_L/2, b.R_L/2 + ENV)),
+        "radio: abertura pared superior": ("radio", tilted(b.R_W, b.R_W + ENV_BACK, 0, RH, -b.R_L/2, b.R_L/2)),
         "ATU-10: OLED, botón y USB-C (-X)": ("ATU-10", b.box(ax0 - ENV, ax0, ay0 + i, ay0 + b.ATU_T - i, az0 + i, az0 + b.ATU_H - i)),
         "ATU-10: BNC TX/ANT (+X)": ("ATU-10", b.box(ax1, ax1 + ENV, ay0 + i, ay0 + b.ATU_T - i, az0 + i, az0 + b.ATU_H - i)),
     }
     return p, env
 
-def slider_at(p, y_rail):
-    t = p["_slider"]
-    if t is None:   # sin el STL original: lengüeta DL2MAN + caja del cuerpo
-        return b.rail_tongue(y_rail) + b.box(-45, 45, y_rail, y_rail + 26, b.RAIL_Z0, b.RAIL_Z0 + 60)
-    t = t.copy(); t.apply_transform(b.slider_pose(y_rail)); return b.to_mf(t)
+def slider_at(p, y_rail, key="_batería"):
+    """Coloca la batería BricoHams (o el slider original de DL2MAN) en la ranura con la boca en y_rail."""
+    t = p[key].copy(); t.apply_transform(b.slider_pose(y_rail)); return b.to_mf(t)
 
 def lift_env(m, owner, name, y0=None):
     """Zona libre encima de la pieza para sacarla hacia arriba (y0: desde la boca del riel; la
@@ -107,27 +118,33 @@ def check_combo(r, title, solids, envs, masses):
     r.check("estable: centro de masas dentro de la huella", margin > 5,
             f"margen {margin:.0f} mm, CdM ({com[0]:.0f}, {com[1]:.0f}, {com[2]:.0f}), {tot*1000:.0f} g (masas estimadas)")
 
-def check_joint(r, name, female, male, solids_around=()):
-    """Mueve la pieza macho respecto a la hembra y mide la interferencia."""
-    t = lambda d: male.translate(d)
-    s = vol(female, male)
+UP, BACK = (0, 0, 1.0), (0, 1.0, 0)
+
+def check_joint(r, name, fixed, moving, solids_around=(), out=BACK, up=UP, stop=True):
+    """Mueve la pieza `moving` respecto a `fixed` y mide la interferencia.
+       out: hacia donde se separaría la cola de milano; up: sentido de extracción por el riel;
+       stop: si el riel tiene tope (la tapa de DL2MAN está abierta por los dos extremos)."""
+    out, up = np.asarray(out, float), np.asarray(up, float)
+    t = lambda d: moving.translate(list(d))
+    s = vol(fixed, moving)
     r.check(f"{name}: asentado sin choque", s < 0.5, f"{s:.2f} mm³")
-    v = vol(female, t([0, 1.5, 0]))
-    r.check(f"{name}: retiene al tirar hacia atrás 1,5 mm (cola de milano)", v > 1, f"{v:.0f} mm³")
-    v = vol(female, t([0, 0, -1.0]))
-    r.check(f"{name}: tope al empujar 1 mm hacia abajo", v > 1, f"{v:.0f} mm³")
-    v = vol(female, t([0, 0, 5.0]))
-    r.check(f"{name}: clic de los detents al subir 5 mm", 0.05 < v < 5, f"{v:.2f} mm³")
-    path = max(vol(female, t([0, 0, dz])) + sum(vol(o, t([0, 0, dz])) for o in solids_around)
+    v = vol(fixed, t(1.5 * out))
+    r.check(f"{name}: la cola de milano retiene al tirar 1,5 mm", v > 1, f"{v:.0f} mm³")
+    if stop:
+        v = vol(fixed, t(-1.0 * up))
+        r.check(f"{name}: tope al empujar 1 mm más allá", v > 1, f"{v:.0f} mm³")
+    v = vol(fixed, t(5.0 * up))
+    r.check(f"{name}: clic de los detents al sacar 5 mm", 0.05 < v < 5, f"{v:.2f} mm³")
+    path = max(vol(fixed, t(dz * up)) + sum(vol(o, t(dz * up)) for o in solids_around)
                for dz in np.arange(2, LIFT, 4.0))
-    r.check(f"{name}: camino de inserción libre desde arriba (solo roce de detents)", path < 3, f"máx {path:.2f} mm³")
+    r.check(f"{name}: camino de inserción libre (solo roce de detents)", path < 3, f"máx {path:.2f} mm³")
 
 def main():
     p, env = parts()
     r = Report()
     st, sv, radio, atu = p["soporte"], p["funda ATU-10"], p["radio"], p["ATU-10"]
     r.head("Piezas impresas")
-    for n, m in (("soporte", st), ("funda ATU-10", sv)):
+    for n, m in (("soporte", st), ("funda ATU-10", sv), ("batería", b.to_mf(p["_batería"]))):
         r.check(f"pieza {n}: sólido estanco y único", m.status().name == "NoError" and len(m.decompose()) == 1,
                 f"{m.volume()/1000:.1f} cm³")
     radio_env = {k: v for k, v in env.items() if v[0] == "radio"}
@@ -150,17 +167,25 @@ def main():
     check_combo(r, "Funda ATU-10 sola, con el ATU-10 dentro", {"funda ATU-10": sv, "ATU-10": atu}, atu_env, MASS)
 
     r.head("Encaje de los rieles")
+    check_joint(r, "soporte -> radio (bottom_cover_battery, por la pendiente)", st, radio, (),
+                (0, b.N[0], b.N[1]), (0, b.U[0], b.U[1]))
     check_joint(r, "soporte -> batería", st, bat2, (radio,))
     check_joint(r, "soporte -> funda ATU-10", st, sv, (radio,))
     check_joint(r, "funda ATU-10 -> batería", sv, bat3, (st, radio))
-    if p["_slider"] is None:
-        r.lines.append("\n> Aviso: falta vendor/battery-slider.stl; la batería se ha modelado como una caja.")
+    # uso portátil: la batería BricoHams en la tapa bottom_cover_battery de la radio (marco de la tapa)
+    cover = b.to_mf(trimesh.load(b.VENDOR / "bottom_cover_battery.stl"))
+    bt = p["_batería"].copy(); bt.apply_transform([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]])
+    check_joint(r, "radio (bottom_cover_battery) -> batería, uso portátil", cover, b.to_mf(bt), (),
+                (0, 0, -1), (0, 1, 0), stop=False)
+    if p["_dl2man"] is not None:   # el slider original de DL2MAN sigue encajando
+        check_joint(r, "soporte -> slider original DL2MAN", st, slider_at(p, b.Y_BACK, "_dl2man"), (radio,))
 
     out = "\n".join(r.lines)
     print(out)
     (b.ROOT / "docs" / "verificacion.md").write_text(
         "# Verificación de choques y accesos\n\nGenerado por `python src/verify.py`. "
-        "Radio y ATU-10 son modelos simplificados (cajas); la batería es `vendor/battery-slider.stl`.\n"
+        "Piezas exportadas desde Fusion 360. La radio es la tapa `vendor/bottom_cover_battery.stl` (DL2MAN) "
+        "más una caja de 90 × 60 × 30 mm; el ATU-10 es una caja de 100 × 71 × 25 mm.\n"
         + out + f"\n\n**Resultado global: {'TODO OK' if r.ok else 'HAY FALLOS'}**\n", encoding="utf-8")
     print("\nTODO OK" if r.ok else "\nHAY FALLOS")
     return r.ok
