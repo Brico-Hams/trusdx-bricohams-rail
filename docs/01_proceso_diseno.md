@@ -187,9 +187,22 @@ Los usan el modelo de Fusion 360 (`fusion/trusdx_rail_fusion.py`) y la verificac
 | `ATU_CLR` | 0,4 | Holgura por lado de la funda |
 | `CALL` | `None` | Indicativo en el lateral derecho del soporte y en la funda |
 
+## Alcance actual y accesorios
+
+Las decisiones y dimensiones de este documento describen los **módulos v3 originales**, no una
+adaptación ya terminada al portapilas adquirido. La referencia real de tres ranuras mide
+75,6 × 61,5 × 18,3 mm según anuncio; su retención y alojamiento siguen pendientes.
+El hueco nominal y los resultados de interferencia no prueban que ese portapilas quede sujeto.
+Consultar el [estado general actualizado](08_estado_general.md) y el [prototipo P0](04_prototipo_test.md).
+
+La llave Morse, los aisladores/devanador U01 y la caja genérica de toroide son accesorios separados,
+con generadores Python y manuales propios. No forman parte de la cadena de rieles ni de las pruebas
+de estabilidad del conjunto original. La bandeja bajo el atril todavía es un concepto, sin STL.
+
 ## Herramientas
 
 - **Fusion 360** para el modelo: bocetos, extrusiones, vaciado, loft de la embocadura, revoluciones de los detents y
   texto grabado, con historial paramétrico. Exporta STL (impresión) y STEP (para editar en cualquier CAD).
-- **Python 3** solo para medir y verificar: `trimesh` (lectura y medidas de los STL originales), `manifold3d`
+- **Python 3** para medir y verificar los módulos originales, y generar los accesorios P0 independientes:
+  `trimesh` (lectura y medidas de los STL originales), `manifold3d`
   (booleanas de interferencia), `scipy` (estabilidad) y `pyvista` (imágenes).

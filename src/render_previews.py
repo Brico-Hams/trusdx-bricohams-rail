@@ -6,6 +6,9 @@
 import sys, pathlib, numpy as np, pyvista as pv
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import geom as b, verify as vf
+import antenna_accessories
+import morse_key
+import toroid_case
 
 pv.OFF_SCREEN = True
 I = b.ROOT / "images"
@@ -30,10 +33,10 @@ def shot(out, solids, views, titles, extra=(), size=(1600, 760)):
     pl.screenshot(I / out); pl.close()
 
 def main():
+    I.mkdir(exist_ok=True)
     p, env = vf.parts()
     st, sv, radio, atu = p["soporte"], p["funda ATU-10"], p["radio"], p["ATU-10"]
     bat2, bat3 = vf.slider_at(p, b.Y_BACK), vf.slider_at(p, b.ATU_Y1)
-    for f in I.glob("*.png"): f.unlink()
     shot("combo1_trusdx.png", {"soporte": st, "radio": radio}, [FRONT_LEFT, BACK_RIGHT],
          ["1 · (tr)uSDX solo: extremos con conectores libres", "Vista trasera: ranura DL2MAN vacía"])
     shot("combo2_trusdx_bateria.png", {"soporte": st, "radio": radio, "batería": bat2}, [FRONT_LEFT, BACK_RIGHT],
@@ -51,6 +54,26 @@ def main():
          size=(1400, 700))
     shot("funda_atu10.png", {"funda ATU-10": sv}, [(-1.2, -1.0, 0.6), (1.3, 1.1, 0.6)],
          ["Funda ATU-10: lengüeta delante, abierta por -X", "Ranura detrás y marco-tope en +X (BNC)"], size=(1400, 700))
+    base, lever = morse_key.parts()
+    morse_key.validate(base, lever)
+    shot("morse_key.png", {"base": base, "batería": lever},
+         [FRONT_LEFT, BACK_RIGHT],
+         ["Llave recta P0: solo plasticos, sin tornillos ni muelle",
+          "Eje, contactos, tope y muelle: consultar manual"], size=(1400, 700))
+    case_base, lid, _ = toroid_case.build(50, 26)
+    toroid_case.validate(case_base, lid, 50, 26)
+    shot("toroid_case.png", {"base": case_base, "tapa": lid.translate((0, 0, 20))},
+         [FRONT_LEFT, BACK_RIGHT],
+         ["Caja generica de transporte: hueco D50 x 26 mm",
+          "NO corresponde al FT114 sobre PCB U01"], size=(1400, 700))
+    accessories = antenna_accessories.parts()
+    insulator = accessories["u01-insulator_P0_BricoHams.stl"]
+    winder = accessories["u01-wire-winder_P0_BricoHams.stl"]
+    shot("u01_accessories.png",
+         {"devanador": winder, "batería": insulator.translate((40, 70, 0))},
+         [FRONT_LEFT, BACK_RIGHT],
+         ["U01: devanador auxiliar y aislador P0",
+          "Sin PCB, toroide, hilo ni cuerda; ensayo fisico pendiente"], size=(1400, 700))
     for f in sorted(I.glob("*.png")): print(f.name)
 
 if __name__ == "__main__":

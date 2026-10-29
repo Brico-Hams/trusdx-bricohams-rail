@@ -15,6 +15,12 @@ Temperaturas orientativas de PETG: boquilla a 235–245 °C, cama a 75–80 °C 
 
 ## Notas
 
+- Los ajustes de esta tabla corresponden a los tres módulos originales. Para accesorios nuevos,
+  consultar [llave Morse](05_llave_morse.md), [aisladores y devanador U01](07_antena_u01.md)
+  y [caja genérica de transporte](06_protector_toroide.md). La caja genérica no sirve para la PCB U01.
+- El portapilas triple seleccionado mide 75,6 × 61,5 × 18,3 mm según anuncio:
+  no se ha adaptado ni validado su retención en el STL actual; ver [estado P0](04_prototipo_test.md).
+
 - Las ranuras y las lengüetas verticales salen como la tapa de DL2MAN. Los voladizos de la cola de milano son de 3 mm y
   salen bien sin soportes. La lengüeta de la pendiente del soporte tiene flancos a unos 30° de la vertical: tampoco
   necesita soportes.

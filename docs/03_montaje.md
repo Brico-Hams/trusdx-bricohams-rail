@@ -17,18 +17,29 @@ Las piezas BricoHams también están en STEP (`step/`) para modificarlas en cual
 
 | Material | Cant. | Notas |
 |---|---|---|
-| Portapilas 3×18650 (77 × 60 × 22 mm) | 1 | El mismo que usa el slider de DL2MAN |
+| Portapilas 3×18650 seleccionado (75,6 × 61,5 × 18,3 mm anunciados) | 1 | Imagen corregida del usuario; confirmar conexión 3S y medidas reales. Adaptación y retención pendientes: el alojamiento original es de 77 × 60 × 22 mm; ver [prototipo P0](04_prototipo_test.md) |
 | Celdas 18650 **protegidas** | 3 | |
 | Placa **BMS 3S** | 1 | Debe caber en el hueco de 77 × 58 × 7 mm junto con el cargador |
 | Placa de **carga USB-C para 3S** (12,6 V) | 1 | Con el USB-C hacia arriba, en el borde abierto del hueco |
 | Fusible en línea y portafusible | 1 | En el positivo de salida |
-| Cable de 22 AWG y clavija DC del (tr)uSDX | — | Salida de la batería, por la pared izquierda |
+| Cable bipolar flexible de 22 AWG | 1 tramo | Del pack protegido a la radio, por la pared izquierda; ajustar longitud en el montaje y prever alivio de tracción |
+| Clavija de alimentación DC macho, Ø exterior **3,5 mm**, Ø interior **1,3 mm** | 1 | Centro positivo, exterior a masa. Referencia funcional: [pinout oficial de DL2MAN](https://dl2man.de/wp-content/uploads/2021/12/image-61-1024x447.png), enlazado desde su [manual](https://dl2man.de/4-trusdx-manual/). Preferible con cable moldeado; comprobar ajuste y longitud de inserción en la radio real antes de comprar o montar |
 | Latiguillo coaxial corto, SMA (o BNC con el adaptador de la radio) a BNC | 1 | Radio → ATU-10 (TX), por el lado derecho |
 | Cianoacrilato o cinta de doble cara | — | Para fijar las placas en el hueco |
 | Fieltro adhesivo o patas de goma | Opcional | Bajo el soporte y la funda; o en la funda si el ATU-10 queda flojo |
+| Clavija de audio estéreo TRS de 3,5 mm y cable apantallado | 1, opcional | Para micrófono externo compatible y PTT; no confundir con la clavija DC de alimentación |
+| Pulsador PTT momentáneo normalmente abierto | 1, opcional | Si el micrófono no incorpora uno compatible; contacto entre punta y masa, sin aplicar tensión externa |
+| Altavoz externo compatible con la salida Audio OUT del (tr)uSDX | 1, opcional | Modelo, impedancia/potencia o alimentación del amplificador pendientes; la imagen aportada muestra el portapilas, no el altavoz |
+| Cable de audio con clavija estéreo TRS de 3,5 mm del lado de la radio | 1, si se instala altavoz | Extremo del altavoz según su fabricante; no es el cable DC ni el de MIC/KEY |
 
 > ⚠️ Un pack 3S de iones de litio llega a **12,6 V** con carga completa. Comprueba que esa tensión está dentro de lo que
 > admite tu (tr)uSDX. Pon un fusible en serie, respeta la polaridad y aísla las placas (cinta Kapton) dentro del hueco.
+
+La referencia de compra del conector es **clavija DC 3,5 × 1,3 mm, centro positivo**, no un jack de audio
+de 3,5 mm ni una clavija de alimentación de 5,5 × 2,1 mm. El dibujo oficial indica 7–16 V de entrada
+(12–13,8 V típicos); confirmar la versión de la radio. Antes de conectarla, verificar con multímetro
+la tensión y polaridad de la clavija terminada. La longitud del contacto y el diámetro del cuerpo
+del conector comercial también deben dejar libre el acceso en la carcasa.
 
 ## Pasos
 
@@ -94,7 +105,76 @@ No agrandes ni perfores el riel para alojar electrónica.
 7. **Uso portátil:** la batería se engancha también bajo la radio, en su tapa `bottom_cover_battery`: es el mismo riel.
    Con la batería bajo la radio, la radio no se puede poner en el soporte.
 
+## Micrófono externo y PTT
+
+Se interpreta la petición «microsof» como **micrófono externo**; no se ha identificado un modelo concreto.
+El conexionado del lado de la radio está definido por el
+[pinout oficial de DL2MAN](https://dl2man.de/wp-content/uploads/2021/12/image-61-1024x447.png)
+y su [manual](https://dl2man.de/4-trusdx-manual/).
+Usar la entrada **MIC/KEY**, no la salida de auriculares ni el conector de alimentación.
+
+| Contacto de la clavija TRS de 3,5 mm | Función en MIC/KEY |
+|---|---|
+| Punta (tip) | PTT / DIT |
+| Anillo (ring) | Micrófono / DAH / entrada de audio |
+| Cuerpo (sleeve) | Masa (GND) |
+
+Para un micrófono cuya compatibilidad eléctrica con el (tr)uSDX esté confirmada:
+
+```text
+Señal de micrófono compatible ---------------- anillo (ring)
+Retorno de micrófono / pantalla -------------- cuerpo (sleeve, GND)
+Punta (tip) -------- pulsador PTT NA ---------- cuerpo (sleeve, GND)
+```
+
+El PTT es un contacto momentáneo normalmente abierto: al pulsarlo une punta y masa.
+No se aplica tensión externa a esa línea ni se conecta a ella la alimentación de la batería.
+La entrada es compartida con la llave/pala de CW; seleccionar el modo de voz correspondiente.
+El manual indica que conectar un micrófono/llave/pala externo deshabilita el micrófono interno.
+
+Antes de montar:
+
+1. Identificar con multímetro los contactos de la clavija **desconectada**; no fiarse del color del cable
+   ni del pinout de otro fabricante. Un micro de PC TRRS o un micro de mano de otra radio no es directamente equivalente.
+2. Confirmar tipo de cápsula, nivel, impedancia y necesidades de polarización contra la documentación
+   del micrófono y la revisión de la radio. Este esquema no prescribe alimentación de cápsulas electret,
+   phantom de 48 V ni un adaptador universal para micrófonos dinámicos o amplificados.
+3. Con la radio apagada, comprobar que el PTT abre en reposo y cierra únicamente punta a masa al pulsar;
+   verificar ausencia de cortocircuitos accidentales y añadir alivio de tracción.
+4. Conectar con la radio apagada. Para la prueba de transmisión, usar una carga ficticia de 50 ohmios
+   con potencia adecuada, supervisar el PTT y comprobar el audio antes de usarlo al aire.
+
+El modelo y conexionado interno del micrófono siguen pendientes: no se considera validado un accesorio
+concreto solo por llevar una clavija de 3,5 mm.
+
+## Altavoz externo
+
+Conectar el altavoz compatible a **Audio OUT**, mediante la conexión estéreo de **3,5 mm**
+indicada en el [pinout oficial](https://dl2man.de/wp-content/uploads/2021/12/image-61-1024x447.png).
+No conectarlo a MIC/KEY ni al jack DC. El [manual de DL2MAN](https://dl2man.de/4-trusdx-manual/)
+indica que insertar auriculares o un altavoz externo desconecta el altavoz interno.
+
+La imagen facilitada para esta petición corresponde al portapilas triple, por lo que **no identifica
+el altavoz ni permite seleccionar su conexión interna**. Antes de fabricar el cable:
+
+- **Pasivo:** comprobar que su impedancia y potencia son admisibles para la salida de la revisión
+  concreta del (tr)uSDX. No dar por compatible cualquier altavoz de 4 u 8 ohmios.
+- **Activo:** conectar la entrada de audio del amplificador, no su salida de potencia, a la radio
+  mediante el cable/adaptación especificado por su fabricante. Confirmar nivel de entrada y alimentación.
+  No alimentar un altavoz USB de 5 V directamente desde el pack 3S de hasta 12,6 V.
+- No unir punta y anillo ni usar un adaptador mono improvisado: confirmar primero los contactos y
+  la adaptación requerida para la radio y el altavoz elegidos.
+- Mantener cables y el eventual amplificador fuera del recorrido de los rieles, sin bloquear
+  conectores ni ventilación. No se ha diseñado una fijación mecánica para un altavoz sin medidas.
+
+Hacer la primera conexión con los equipos apagados y probar después a volumen bajo.
+Si se usa amplificador externo, verificar ruido e interferencias en recepción antes de integrarlo
+en el mismo conjunto. El BOM recoge este accesorio como **pendiente de selección**, no como montaje validado.
+
 ## Módulos sueltos
+
+Para añadir un manipulador portátil, ver la [llave Morse recta P0](05_llave_morse.md):
+incluye sus dos STL, BOM, montaje y conexión a MIC/KEY. No comparte ese conector con el micrófono durante el uso.
 
 - **Soporte:** sujeta la radio por su riel sin nada más. La ranura trasera queda vacía.
 - **Funda del ATU-10:** se tiene de pie sola, con el ATU-10 dentro, y deja libres los dos paneles.

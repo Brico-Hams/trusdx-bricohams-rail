@@ -8,9 +8,10 @@ Soporte de mesa para el transceptor QRP **(tr)uSDX** con módulos que se enganch
 | **ATU-10** (N7DDC) | `stl/atu10-sleeve_rail_BricoHams.stl` (nuevo) | Sí: funda de mesa | Lengüeta delante + ranura detrás |
 | **Batería 3×18650** | `stl/battery-3x18650_rail_BricoHams.stl` (nuevo) | Sí, o bajo la radio | Lengüeta DL2MAN; hueco para BMS 3S + cargador USB-C |
 
-Como candidato para el portabaterías se propone el [3S Battery Case de Richard Sisol (MakerWorld, perfil 1666971)](https://makerworld.com/es/models/1583590-3s-battery-case#profileId-1666971).
-Su adaptación al riel está **pendiente**: no sustituye todavía a la pieza de batería de esta tabla.
-Ver [referencia y comprobaciones pendientes](docs/01_proceso_diseno.md#portabaterías-propuesto-makerworld).
+El portapilas seleccionado por el usuario es triple, de **75,6 × 61,5 × 18,3 mm anunciados**.
+Su alojamiento y retención en el STL actual **no están validados**: ver el [prototipo P0](docs/04_prototipo_test.md).
+La caja [3S Battery Case de Richard Sisol](https://makerworld.com/es/models/1583590-3s-battery-case#profileId-1666971)
+queda como referencia estudiada, no como solución seleccionada.
 
 Todas las uniones usan **el mismo riel de cola de milano que DL2MAN** usa para llevar la batería bajo la radio,
 con sus detents de clic. La radio (con la tapa `bottom_cover_battery.stl` de DL2MAN) se desliza por la lengüeta de la
@@ -44,25 +45,48 @@ Ver la [comprobación de choques y accesos](docs/verificacion.md).
 3. [Montaje, cableado y materiales](docs/03_montaje.md)
 4. [Verificación de choques y accesos](docs/verificacion.md)
 5. [Atribución y licencias](ATTRIBUTION.md)
+6. [Prototipo P0: archivo a imprimir y pruebas de aceptación](docs/04_prototipo_test.md)
+7. [Llave Morse recta portátil P0: STL, BOM y montaje](docs/05_llave_morse.md)
+8. [Protector de transporte de toroide P0: STL paramétricos y límites](docs/06_protector_toroide.md)
+9. [Antena U01 FT114-43: aisladores, devanador, cubierta de referencia y BOM](docs/07_antena_u01.md)
+10. [Estado general, orden de fabricación y transporte bajo el atril](docs/08_estado_general.md)
+
+## Accesorios portátiles P0
+
+Las imágenes son vistas de geometría, **no fotografías de montajes ensayados**. La radio y el ATU-10
+se representan de forma simplificada. No se muestran placas, cables ni tornillería real.
+
+| Llave Morse recta | Accesorios U01 | Caja genérica de toroide suelto |
+|---|---|---|
+| ![Llave P0](images/morse_key.png) | ![Aislador y devanador](images/u01_accessories.png) | ![Caja de referencia](images/toroid_case.png) |
+| [Montaje y BOM](docs/05_llave_morse.md) | [Montaje y BOM](docs/07_antena_u01.md) | [No sirve para la PCB U01](docs/06_protector_toroide.md) |
 
 Para preparar la electrónica en la batería BricoHams actual, ver la
 [comprobación de envolventes de BMS y cargador](docs/03_montaje.md#preparar-la-electrónica-para-la-batería-bricohams-actual).
 
 ## Regenerar las piezas
 
-Las piezas se modelan en **Fusion 360**:
+Los tres módulos originales se modelan en **Fusion 360**:
 
 1. Ajusta las medidas en `src/dims.py` (inclinación, holguras del riel, medidas del ATU-10, `CALL` = tu indicativo
    para la marca de agua).
 2. En Fusion 360: *Utilidades > Scripts y complementos > +* y elige `fusion/trusdx_rail_fusion.py`. Crea un diseño nuevo
-   con los dos componentes y su historial, y exporta `stl/*.stl` y `step/*.step`.
-3. Verifica y regenera las imágenes (Python solo comprueba; no modela):
+   con los tres componentes y su historial, y exporta sus STL y STEP.
+3. Los accesorios P0 usan generadores Python independientes. No modifican los módulos Fusion:
 
-```bash
-pip install -r requirements.txt
-python src/verify.py                  # choques, accesos, rieles y estabilidad -> docs/verificacion.md
-python src/render_previews.py         # imágenes de images/
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe src\morse_key.py
+.\.venv\Scripts\python.exe src\toroid_case.py --diameter 50 --height 26  # ejemplo, no cubierta U01
+.\.venv\Scripts\python.exe src\antenna_accessories.py
+.\.venv\Scripts\python.exe -m unittest discover -s src -p "test_*.py"
+.\.venv\Scripts\python.exe src\verify.py          # regenera docs\verificacion.md
+.\.venv\Scripts\python.exe src\render_previews.py # 10 vistas PNG
 ```
+
+Las dependencias no incluyen un lector de PDF: el esquema U01 se consulta como documento externo.
+La cubierta FT114 original y el PDF conservan los derechos de sus autores y no se redistribuyen aquí.
 
 > **Versiones anteriores:** la v1 (riel en la trasera del soporte KD9WNR) y la v2 (riel en el lateral izquierdo) dejaban
 > la batería tapando los conectores DC/USB de la radio o el sitio del ATU-10. Esta v3 lo resuelve con la cadena por detrás.
