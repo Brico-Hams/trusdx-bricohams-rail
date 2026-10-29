@@ -173,8 +173,11 @@ en el mismo conjunto. El BOM recoge este accesorio como **pendiente de selecció
 
 ## Módulos sueltos
 
-Para añadir un manipulador portátil, ver la [llave Morse recta P0](05_llave_morse.md):
-incluye sus dos STL, BOM, montaje y conexión a MIC/KEY. No comparte ese conector con el micrófono durante el uso.
+Para añadir un manipulador portátil se ofrecen dos alternativas con STL y BOM independientes:
+[pala doble K6ARK](05_llave_morse.md), con DIT/DAH y modo iámbico, o
+[llave recta magnética DJ9FM](09_llave_recta_dj9fm.md), con punta a masa y modo straight key.
+La antigua recta BricoHams P0 queda obsoleta. Ninguna comparte MIC/KEY con el micrófono durante el uso;
+no mezclar los dos esquemas ni dejar el anillo aislado en la pala doble.
 
 - **Soporte:** sujeta la radio por su riel sin nada más. La ranura trasera queda vacía.
 - **Funda del ATU-10:** se tiene de pie sola, con el ATU-10 dentro, y deja libres los dos paneles.

@@ -1,7 +1,6 @@
 import unittest
 
 import antenna_accessories
-import morse_key
 import toroid_case
 
 
@@ -14,16 +13,6 @@ class PortableAccessoryTests(unittest.TestCase):
                 model = antenna_accessories.validate(solid)
                 self.assertAlmostEqual(model.bounds[0, 2], 0)
                 self.assertAlmostEqual(model.extents[2], 5)
-
-    def test_key_solids_and_travel(self):
-        base, lever = morse_key.parts()
-        morse_key.validate(base, lever)
-        self.assertAlmostEqual(morse_key.mesh(base).extents[0], 72)
-
-    def test_key_validation_detects_collision(self):
-        base, lever = morse_key.parts()
-        with self.assertRaisesRegex(RuntimeError, "interferencia"):
-            morse_key.validate(base, lever.translate((0, 0, -10)))
 
     def test_reference_case(self):
         base, lid, total = toroid_case.build(50, 26)

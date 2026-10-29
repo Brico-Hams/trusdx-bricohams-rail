@@ -15,7 +15,9 @@ interferencia no certifican resistencia, seguridad eléctrica, ajuste impreso ni
 | BMS y cargador | [Guía](03_montaje.md) | Candidatos identificados; cotas, equilibrado y validación eléctrica/térmica pendientes |
 | Cable DC a radio | [BOM](03_montaje.md#materiales) | Referencia 3,5 × 1,3 mm, centro positivo; comprobar unidad real |
 | Micrófono y altavoz | [Conexión](03_montaje.md) | Pinout de radio documentado; modelos de accesorios sin identificar |
-| Llave recta portátil | [Manual, dos STL y BOM](05_llave_morse.md) | Geometría comprobada; hardware ajustable y prueba física pendientes |
+| Pala doble K6ARK | [Manual, cuatro STL y BOM](05_llave_morse.md) | Originales preparados sin rediseño; encajes, jack, flexión y contactos pendientes de ensayo |
+| Llave recta DJ9FM | [Manual, ocho STL con variantes y BOM](09_llave_recta_dj9fm.md) | Mallas comprobadas; selección de variantes, montaje y ajuste de hardware pendientes |
+| Antigua llave BricoHams P0 | Retirada; disponible en el historial Git | **Obsoleta**, no imprimir para el kit |
 | Antena U01 FT114-43 | [Manual y BOM](07_antena_u01.md) | Identificada en foto y esquema; aislador/devanador P0 nuevos |
 | Cubierta FT114 sobre PCB | [Referencia original](07_antena_u01.md#referencias-e-identificación) | STL original consultado fuera del repo; ajuste físico pendiente |
 | Caja cilíndrica genérica | [Manual y STL](06_protector_toroide.md) | Solo transporte de toroide suelto; **no usar para la U01 sobre PCB** |
@@ -25,7 +27,8 @@ interferencia no certifican resistencia, seguridad eléctrica, ajuste impreso ni
 
 1. Imprimir el módulo de batería existente para probar el **riel**, no para dar por adaptado el portapilas.
 2. Medir portapilas y placas reales. Resolver sujeción, aislamiento, cableado y acceso USB-C antes de un pack operativo.
-3. Imprimir base/palanca Morse y montar según su manual; comprobar continuidad sin conectar a la radio.
+3. Elegir pala doble K6ARK o llave recta DJ9FM; seguir su propio manual/BOM.
+   No imprimir todas las variantes DJ9FM como si fueran un conjunto. Comprobar continuidad sin radio.
 4. Imprimir un aislador U01 de muestra y revisar acabado; producir el resto tras el ensayo mecánico.
    El devanador auxiliar es opcional: la PCB de la antena ya tiene función de recogida.
 5. Ensayar la cubierta FT114 original con la revisión de PCB real, sin forzar ni pinzar bobinado o terminales.
@@ -55,6 +58,8 @@ mantienen las combinaciones reales de los STL existentes.
 
 ```bash
 python -m unittest discover -s src -p "test_*.py"
+python src/prepare_k6ark.py
+python src/prepare_dj9fm.py
 python src/verify.py
 python src/render_previews.py
 ```

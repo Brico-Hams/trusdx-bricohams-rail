@@ -16,8 +16,12 @@ Temperaturas orientativas de PETG: boquilla a 235–245 °C, cama a 75–80 °C 
 ## Notas
 
 - Los ajustes de esta tabla corresponden a los tres módulos originales. Para accesorios nuevos,
-  consultar [llave Morse](05_llave_morse.md), [aisladores y devanador U01](07_antena_u01.md)
+  consultar [pala K6ARK](05_llave_morse.md), [llave recta DJ9FM](09_llave_recta_dj9fm.md),
+  [aisladores y devanador U01](07_antena_u01.md)
   y [caja genérica de transporte](06_protector_toroide.md). La caja genérica no sirve para la PCB U01.
+- La antigua llave recta BricoHams P0 queda obsoleta. Las dos referencias actuales no comparten
+  receta: K6ARK exige PETG y bisagras de dos perímetros; DJ9FM requiere revisar orientación,
+  soportes y ajuste de rodamientos. No escalar los STL para corregir encajes.
 - El portapilas triple seleccionado mide 75,6 × 61,5 × 18,3 mm según anuncio:
   no se ha adaptado ni validado su retención en el STL actual; ver [estado P0](04_prototipo_test.md).
 

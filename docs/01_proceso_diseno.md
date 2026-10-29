@@ -45,7 +45,8 @@ de verificación del módulo de batería actual.
 
 #### Comprobación geométrica de los STL aportados (2026-10-29)
 
-Se han examinado los cuatro originales facilitados por el usuario en `3S+Battery+Case/`, sin modificarlos.
+Se han examinado cuatro originales facilitados por el usuario, sin modificarlos.
+La descarga de referencia se conserva fuera del repositorio y no se redistribuye.
 Esto resuelve el bloqueo de descarga anterior. Las coordenadas se interpretan en **mm** (STL no declara unidades);
 se conserva la posición relativa original, sin recentrar cada pieza.
 

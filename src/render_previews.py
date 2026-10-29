@@ -7,7 +7,8 @@ import sys, pathlib, numpy as np, pyvista as pv
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import geom as b, verify as vf
 import antenna_accessories
-import morse_key
+import prepare_k6ark
+import prepare_dj9fm
 import toroid_case
 
 pv.OFF_SCREEN = True
@@ -17,7 +18,7 @@ FRONT_LEFT, BACK_RIGHT = (-1.0, -1.3, 0.9), (1.2, 1.4, 0.8)
 
 def mesh(m): return pv.wrap(b.to_tm(m))
 
-def shot(out, solids, views, titles, extra=(), size=(1600, 760)):
+def shot(out, solids, views, titles, extra=(), size=(1600, 760), credit="BricoHams"):
     pl = pv.Plotter(off_screen=True, shape=(1, len(views)), window_size=size)
     allb = np.array([m.bounding_box() for m in solids.values()])
     c = (allb[:, :3].min(0) + allb[:, 3:].max(0)) / 2
@@ -29,7 +30,12 @@ def shot(out, solids, views, titles, extra=(), size=(1600, 760)):
             pl.add_mesh(mesh(m), color=col, opacity=op)
         pl.camera_position = [tuple(c + np.array(v) * 210), tuple(c), (0, 0, 1)]
         pl.add_text(t, font_size=10, color="black", position="upper_left")
-        pl.add_text("BricoHams", font_size=12, color="#bbbbbb", position="lower_right")
+        if credit == "BricoHams":
+            pl.add_text(credit, font_size=12, color="#bbbbbb", position="lower_right")
+        else:
+            pl.reset_camera()
+            pl.camera.zoom(0.9)
+            pl.add_text(credit, font_size=10, color="#777777", position="lower_right")
     pl.screenshot(I / out); pl.close()
 
 def main():
@@ -54,12 +60,26 @@ def main():
          size=(1400, 700))
     shot("funda_atu10.png", {"funda ATU-10": sv}, [(-1.2, -1.0, 0.6), (1.3, 1.1, 0.6)],
          ["Funda ATU-10: lengüeta delante, abierta por -X", "Ranura detrás y marco-tope en +X (BNC)"], size=(1400, 700))
-    base, lever = morse_key.parts()
-    morse_key.validate(base, lever)
-    shot("morse_key.png", {"base": base, "batería": lever},
+    paddle_parts = {}
+    for i, name in enumerate(prepare_k6ark.FILES):
+        part = prepare_k6ark.prepare(name)
+        part.apply_translation((i * 65 - part.bounds[0, 0], -part.bounds[0, 1], 0))
+        paddle_parts[name] = b.to_mf(part)
+    shot("morse_key.png", paddle_parts,
          [FRONT_LEFT, BACK_RIGHT],
-         ["Llave recta P0: solo plasticos, sin tornillos ni muelle",
-          "Eje, contactos, tope y muelle: consultar manual"], size=(1400, 700))
+         ["K6ARK: palas, base cerrada, tapa y protector separados",
+          "Sin hardware; encajes y tacto pendientes de ensayo"], size=(1800, 800),
+         credit="Adam Kimmerly / K6ARK - CC BY-NC-SA 4.0")
+    key_parts = {}
+    for i, name in enumerate(prepare_dj9fm.FILES):
+        part = prepare_k6ark.prepare(name, prepare_dj9fm.SOURCE)
+        part.apply_translation(((i % 4) * 55 - part.bounds[0, 0],
+                                (i // 4) * 110 - part.bounds[0, 1], 0))
+        key_parts[name] = b.to_mf(part)
+    shot("dj9fm_key.png", key_parts, [FRONT_LEFT, BACK_RIGHT],
+         ["DJ9FM: piezas y variantes separadas, NO ensamblaje",
+          "No montar todas las variantes juntas; consultar manual"], size=(1800, 800),
+         credit="Willie / DJ9FM (willie42) - CC BY-NC 4.0")
     case_base, lid, _ = toroid_case.build(50, 26)
     toroid_case.validate(case_base, lid, 50, 26)
     shot("toroid_case.png", {"base": case_base, "tapa": lid.translate((0, 0, 20))},

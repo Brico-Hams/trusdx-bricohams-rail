@@ -10,6 +10,8 @@ Este proyecto se apoya en trabajos de la comunidad. Todos los créditos van a su
 | Battery slider with USB-C charger | **DL1MAD** (remix de DL2MAN) | https://www.printables.com/model/1339609 | CC BY-SA 4.0 | Compatible sin cambios |
 | 3S Battery Case | **Richard Sisol** | https://makerworld.com/es/models/1583590-3s-battery-case#profileId-1666971 | Standard Digital File License (según la ficha de MakerWorld) | Referencia propuesta para el portabaterías 3×18650; integración pendiente. No se incluyen ni modifican sus archivos; cualquier modificación o redistribución requiere revisar los permisos de su licencia |
 | ATU-10 | **N7DDC** (David Fainitski) | https://github.com/Dfinitski/ATU-10-10W-QRP-antenna-tuner | — | Medidas de la caja (100 × 71 × 25 mm) y disposición de los paneles |
+| Morse Code Paddle / CW Key | **Adam Kimmerly / K6ARK** | https://www.printables.com/model/332611-morse-code-paddle-cw-key | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) | Cuatro originales sin modificar en `vendor/k6ark-paddle/`; copias en `stl/k6ark-*` trasladadas solo en Z; vista `images/morse_key.png` |
+| Straight Morse Key - Compact With Magnets | **Willie DJ9FM / willie42** | https://www.thingiverse.com/thing:6940422 | [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) | Ocho originales y variantes en `vendor/dj9fm-key/`; copias en `stl/dj9fm-*` trasladadas solo en Z; vista `images/dj9fm_key.png` |
 
 PCB, esquemas y firmware del (tr)uSDX son de DL2MAN y PE1NNZ, bajo sus propias licencias (CC BY-ND según DL2MAN). Este proyecto **no** los toca.
 
@@ -17,7 +19,13 @@ PCB, esquemas y firmware del (tr)uSDX son de DL2MAN y PE1NNZ, bajo sus propias l
 
 `stl/*_BricoHams.stl`, `step/*_BricoHams.step`, `fusion/`, `src/`, `images/` y `docs/`: **CC BY-NC-SA 4.0**, © BricoHams.
 
+**Excepciones:** las piezas K6ARK y su vista mantienen CC BY-NC-SA 4.0, © Adam Kimmerly / K6ARK.
+Las piezas DJ9FM y su vista mantienen **CC BY-NC 4.0**, © Willie DJ9FM / willie42,
+sin imponerles SA ni atribuir su diseño a BricoHams. Los manuales de integración son de BricoHams
+y enlazan las instrucciones y créditos originales.
+
 Se mantiene NC (no comercial) y SA, como en las versiones anteriores, para seguir el espíritu abierto del ecosistema
 DL2MAN y KD9WNR.
 
-Al redistribuir, cita a DL2MAN, KD9WNR, N7DDC y BricoHams, y enlaza a este repositorio.
+Al redistribuir, cita a los autores de las piezas incluidas (también K6ARK o DJ9FM si corresponde)
+y BricoHams, enlaza sus licencias e indica las transformaciones y este repositorio.

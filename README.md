@@ -46,20 +46,31 @@ Ver la [comprobación de choques y accesos](docs/verificacion.md).
 4. [Verificación de choques y accesos](docs/verificacion.md)
 5. [Atribución y licencias](ATTRIBUTION.md)
 6. [Prototipo P0: archivo a imprimir y pruebas de aceptación](docs/04_prototipo_test.md)
-7. [Llave Morse recta portátil P0: STL, BOM y montaje](docs/05_llave_morse.md)
+7. [Pala doble K6ARK: cuatro STL, BOM y montaje](docs/05_llave_morse.md)
 8. [Protector de transporte de toroide P0: STL paramétricos y límites](docs/06_protector_toroide.md)
 9. [Antena U01 FT114-43: aisladores, devanador, cubierta de referencia y BOM](docs/07_antena_u01.md)
 10. [Estado general, orden de fabricación y transporte bajo el atril](docs/08_estado_general.md)
+11. [Llave recta magnética DJ9FM: STL, variantes, BOM y montaje](docs/09_llave_recta_dj9fm.md)
 
 ## Accesorios portátiles P0
 
 Las imágenes son vistas de geometría, **no fotografías de montajes ensayados**. La radio y el ATU-10
 se representan de forma simplificada. No se muestran placas, cables ni tornillería real.
 
-| Llave Morse recta | Accesorios U01 | Caja genérica de toroide suelto |
-|---|---|---|
-| ![Llave P0](images/morse_key.png) | ![Aislador y devanador](images/u01_accessories.png) | ![Caja de referencia](images/toroid_case.png) |
-| [Montaje y BOM](docs/05_llave_morse.md) | [Montaje y BOM](docs/07_antena_u01.md) | [No sirve para la PCB U01](docs/06_protector_toroide.md) |
+| Pala doble K6ARK | Llave recta DJ9FM |
+|---|---|
+| ![Piezas K6ARK](images/morse_key.png) | ![Piezas y variantes DJ9FM](images/dj9fm_key.png) |
+| [Cuatro STL, montaje y BOM](docs/05_llave_morse.md) | [STL, variantes, montaje y BOM](docs/09_llave_recta_dj9fm.md) |
+
+Se ofrecen **ambas alternativas**: K6ARK con bisagras de PETG para keyer iámbico y DJ9FM con
+rodamientos e imanes para manipulación recta. Las piezas originales conservan autoría y licencia;
+no son diseños nuevos de BricoHams. La antigua llave recta P0 se ha retirado; queda en el historial Git.
+Las geometrías están comprobadas digitalmente, no el montaje físico ni el ajuste del hardware.
+
+| Accesorios U01 | Caja genérica de toroide suelto |
+|---|---|
+| ![Aislador y devanador](images/u01_accessories.png) | ![Caja de referencia](images/toroid_case.png) |
+| [Montaje y BOM](docs/07_antena_u01.md) | [No sirve para la PCB U01](docs/06_protector_toroide.md) |
 
 Para preparar la electrónica en la batería BricoHams actual, ver la
 [comprobación de envolventes de BMS y cargador](docs/03_montaje.md#preparar-la-electrónica-para-la-batería-bricohams-actual).
@@ -77,12 +88,13 @@ Los tres módulos originales se modelan en **Fusion 360**:
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe src\morse_key.py
+.\.venv\Scripts\python.exe src\prepare_k6ark.py
+.\.venv\Scripts\python.exe src\prepare_dj9fm.py
 .\.venv\Scripts\python.exe src\toroid_case.py --diameter 50 --height 26  # ejemplo, no cubierta U01
 .\.venv\Scripts\python.exe src\antenna_accessories.py
 .\.venv\Scripts\python.exe -m unittest discover -s src -p "test_*.py"
 .\.venv\Scripts\python.exe src\verify.py          # regenera docs\verificacion.md
-.\.venv\Scripts\python.exe src\render_previews.py # 10 vistas PNG
+.\.venv\Scripts\python.exe src\render_previews.py # 11 vistas PNG
 ```
 
 Las dependencias no incluyen un lector de PDF: el esquema U01 se consulta como documento externo.
