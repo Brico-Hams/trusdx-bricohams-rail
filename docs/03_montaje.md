@@ -32,6 +32,40 @@ Las piezas BricoHams también están en STEP (`step/`) para modificarlas en cual
 
 ## Pasos
 
+### Preparar la electrónica para la batería BricoHams actual
+
+Se conserva el módulo BricoHams con riel DL2MAN, **no la caja MakerWorld**. El hueco nominal para las dos placas
+es de **77 × 58 mm en el plano de las placas y 7 mm de profundidad**. En las coordenadas del STL:
+X = 6,5…83,5; Y = 1,6…8,6; Z = 2…60 mm. Las placas se colocan paralelas al riel (plano XZ);
+el grosor de componentes, aislante y fijación consume la profundidad Y.
+
+Antes de modificar el CAD, mide la envolvente completa de cada placa, incluidos componentes, soldaduras,
+aislamiento y fijación. El siguiente comando prueba giros de 90° y colocaciones lado a lado o una encima de otra
+en el plano XZ, sin apilarlas en profundidad. Reserva 0,5 mm a cada pared y entre placas, y comprueba colisiones
+contra el STL actual. **Estas medidas son un ejemplo de prueba, no placas seleccionadas para el montaje**:
+
+```bash
+python src/check_electronics.py --bms 30 20 3 --charger 25 20 4
+python -m unittest discover -s src -p "test_check_electronics.py"
+```
+
+La entrada es largo, ancho y grosor en mm; la salida da orígenes y dimensiones XYZ en las coordenadas originales
+del STL. Devuelve código 1 si no encuentra una disposición y código 2 para argumentos inválidos.
+Con el margen predeterminado quedan **76 × 57 × 6 mm** útiles. Un resultado negativo solo descarta
+las disposiciones ensayadas, no todas las formas de adaptar la electrónica.
+
+Un resultado positivo solo confirma el encaje estático de las envolventes: **no garantiza** la posición o acceso
+del USB-C, el radio de curvatura de cables, el recorrido de inserción ni la protección eléctrica.
+El BMS, un balanceador y un cargador no son intercambiables por tener todos la etiqueta «3S»:
+hay que confirmar las funciones y requisitos de las placas elegidas.
+
+Para cerrar la adaptación faltan los modelos y cotas de las placas, la posición del USB-C y los puntos de fijación.
+No se añaden taladros ni soportes arbitrarios. Si hace falta ampliar `BAT_CAV_H`, hay que regenerar **STL y STEP**
+en Fusion 360 y repetir `src/verify.py`; cambiar el parámetro no modifica los archivos ya exportados.
+No agrandes ni perfores el riel para alojar electrónica.
+
+### Secuencia de montaje
+
 1. **Batería:**
    1. Mete el BMS y el cargador en el hueco por arriba, con el USB-C del cargador en el borde superior para poder
       cargar con la batería montada. Fíjalos con cinta de doble cara.

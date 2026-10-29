@@ -23,6 +23,87 @@ Ambas versiones eran un remix del soporte de KD9WNR con un riel para la batería
 | Riel bajo la radio | `vendor/bottom_cover_battery.stl` (DL2MAN) | Perfil real de la ranura (tabla «Perfil del riel») |
 | ATU-10 (N7DDC) | [Repositorio de N7DDC](https://github.com/Dfinitski/ATU-10-10W-QRP-antenna-tuner) y la funda de KD9WNR (hueco interior 71,6 × 27,5 mm) | Caja de aluminio de **100 × 71 × 25 mm**. Panel frontal: OLED de 0,91", botón y USB-C. Panel trasero: BNC TX y ANT |
 
+### Portabaterías propuesto (MakerWorld)
+
+Referencia propuesta: [3S Battery Case](https://makerworld.com/es/models/1583590-3s-battery-case#profileId-1666971),
+de **Richard Sisol**, modelo 1583590, perfil 1666971. Según la ficha del autor, aloja tres celdas 18650,
+tiene soportes interiores para un balanceador 3S, aberturas de ventilación y un sistema propio de muesca y gancho.
+La lista del autor incluye ocho tornillos M2,5 × 12 mm.
+
+Su integración en este proyecto está **pendiente**, no verificada:
+
+- Medir la caja y su enganche; no asumir que coinciden con el hueco actual de 77 × 60 × 22 mm ni con el riel DL2MAN.
+- Evaluar un soporte o adaptador independiente al riel, conservando el acceso a la tapa, ventilación y salida de cables.
+- Comprobar el espacio para la electrónica elegida: el soporte para un balanceador no confirma espacio para el BMS
+  y el cargador USB-C del diseño actual, ni sus funciones de protección y carga.
+- Repetir las comprobaciones de choques, accesos, retención y estabilidad con las medidas reales antes de darlo por compatible.
+- Revisar los permisos antes de modificar o redistribuir archivos: la ficha indica **Standard Digital File License**,
+  no CC BY-NC-SA 4.0. Ver [atribución](../ATTRIBUTION.md).
+
+Por ahora solo se enlaza la referencia; no se incorpora su geometría ni se cambian los parámetros, STL, STEP o resultados
+de verificación del módulo de batería actual.
+
+#### Comprobación geométrica de los STL aportados (2026-10-29)
+
+Se han examinado los cuatro originales facilitados por el usuario en `3S+Battery+Case/`, sin modificarlos.
+Esto resuelve el bloqueo de descarga anterior. Las coordenadas se interpretan en **mm** (STL no declara unidades);
+se conserva la posición relativa original, sin recentrar cada pieza.
+
+| Pieza | Dimensiones X × Y × Z (mm) | Volumen de material (mm³) | Triángulos |
+|---|---|---|---|
+| `3S_BOTTOM.stl` | 67,20 × 48,00 × 11,00 | 8 906,71 | 1 376 |
+| `3S_TOP.stl` | 67,20 × 48,00 × 11,00 | 8 840,34 | 1 432 |
+| `3S_BOTTOM_CASE.stl` | 85,17 × 85,74 × 15,30 | 18 817,44 | 4 584 |
+| `3S_TOP_CASE.stl` | 84,34 × 85,74 × 14,50 | 17 742,17 | 4 768 |
+
+Las cuatro mallas son cerradas (`is_watertight`), tienen orientación de caras consistente, volumen positivo,
+un solo componente conectado y se convierten en sólidos válidos de Manifold.
+El conjunto ocupa **85,17 × 85,74 × 29,00 mm**:
+X = −39,9716…45,2000; Y = −42,8716…42,8716; Z = −14,5…14,5.
+Las dos cunas interiores juntas ocupan 67,20 × 48,00 × 22,40 mm; esta envolvente no es un hueco libre.
+
+**Método:** lectura con `trimesh` 5.2.0 y booleanas con `manifold3d` 3.5.4. Las intersecciones se calculan
+sobre las mallas trianguladas, no sobre cajas envolventes. Las celdas son cilindros de 256 lados, con eje Y,
+centro Z = 0 y centros X = −18,4 / 0 / 18,4 mm. No se simulan contactos, cables, tornillos ni placas.
+
+| Comprobación | Resultado |
+|---|---|
+| Intersección entre las seis parejas de piezas, en posición original | **0,000000 mm³** en todas |
+| Separación entre extremos Z de las cunas inferior y superior | 0,40 mm de separación entre sus envolventes; no es una holgura uniforme entre todas las superficies |
+| Cierre vertical: ambas piezas superiores frente a ambas inferiores | Sin choque en los desplazamientos Z = 0 / 0,2 / 0,5 / 1 / 2 / 5 / 10 / 20 / 30 mm; muestreo, no barrido continuo |
+| Tres celdas simuladas Ø18 × 65 mm | **0 mm³** de choque con las cuatro piezas, para cada celda |
+| Celdas simuladas Ø18 × 70 mm | También sin choque con el plástico; no confirma espacio para contactos ni compatibilidad eléctrica |
+| Celdas simuladas Ø18,4 × 65 mm | Interferencia de 8,43…10,03 mm³ por media cuna y celda: no queda holgura utilizable |
+| Celdas simuladas Ø18,6 × 65 mm | Interferencia de 118,57…132,92 mm³ por media cuna y celda: **no encajan sin interferencia** |
+
+Los perfiles de las cunas corresponden aproximadamente a radio **9,2 mm**, con paso entre ejes de **18,4 mm**.
+El espesor radial en el fondo central de las cunas es **2,0 mm** (Z = ±9,2…±11,2); no es un mínimo global
+de pared: hay ventanas y otras zonas con geometría distinta. En la sección Z = −5 mm, los cuatro taladros de
+la cuna inferior tienen Ø2,3 mm; los de la superior en Z = +5 mm tienen Ø3,1 mm.
+La triangulación explica que un cilindro de Ø18,4 mm ya roce aunque el radio nominal sea 9,2 mm.
+Hay que medir las celdas reales, especialmente las protegidas; la denominación «18650» por sí sola no garantiza el ajuste.
+
+**Consecuencia para BricoHams:** la caja completa no cabe en el alojamiento de **77 × 60 × 22 mm** del módulo
+actual, ni permutando sus ejes. Las cunas interiores tampoco son un sustituto directo del portapilas:
+su espesor conjunto es 22,4 mm y necesitan resolver contactos y sujeción.
+El enganche propio de MakerWorld no queda validado como riel DL2MAN por estas pruebas.
+Para usar la caja completa en la cadena modular hay que diseñar y verificar una interfaz de soporte adecuada;
+no basta con cambiar `BAT_HOLDER_L` y `BAT_HOLDER_H`.
+
+**Pendiente:** cotas funcionales del gancho/muesca para esa interfaz, retención y recorrido de inserción,
+espacio real del BMS/cargador, conectores, ventilación con el adaptador y estabilidad del conjunto con radio/ATU-10.
+No se han cambiado los STL/STEP BricoHams ni se atribuyen a esta caja los resultados de `verificacion.md`.
+No se han añadido los originales de MakerWorld al control de versiones ni concedido permisos de redistribución.
+
+Identificación de las mallas analizadas (SHA-256):
+
+```text
+3S_BOTTOM.stl       30b337e780c27f3d00a72055544bf648c09c71ef9c8de36196fe6e05c0e6b6fb
+3S_BOTTOM_CASE.stl  e54ee46bd367b79585d9800bdf3029fdcc5ef8f73bba3a2c4308cc08ef927a60
+3S_TOP.stl          6d8f3e4572680b4ba674cfab952b9bf84545a474c14082d266e8013460b731aa
+3S_TOP_CASE.stl     850bb2f59d40b31d42d483723d6bb805e41bc90024babdac3244907d20efebdd
+```
+
 Aberturas de la carcasa DL2MAN (medidas en los STL):
 
 | Cara de la radio | Aberturas | Uso |

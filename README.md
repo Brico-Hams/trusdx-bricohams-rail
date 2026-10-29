@@ -8,6 +8,10 @@ Soporte de mesa para el transceptor QRP **(tr)uSDX** con módulos que se enganch
 | **ATU-10** (N7DDC) | `stl/atu10-sleeve_rail_BricoHams.stl` (nuevo) | Sí: funda de mesa | Lengüeta delante + ranura detrás |
 | **Batería 3×18650** | `stl/battery-3x18650_rail_BricoHams.stl` (nuevo) | Sí, o bajo la radio | Lengüeta DL2MAN; hueco para BMS 3S + cargador USB-C |
 
+Como candidato para el portabaterías se propone el [3S Battery Case de Richard Sisol (MakerWorld, perfil 1666971)](https://makerworld.com/es/models/1583590-3s-battery-case#profileId-1666971).
+Su adaptación al riel está **pendiente**: no sustituye todavía a la pieza de batería de esta tabla.
+Ver [referencia y comprobaciones pendientes](docs/01_proceso_diseno.md#portabaterías-propuesto-makerworld).
+
 Todas las uniones usan **el mismo riel de cola de milano que DL2MAN** usa para llevar la batería bajo la radio,
 con sus detents de clic. La radio (con la tapa `bottom_cover_battery.stl` de DL2MAN) se desliza por la lengüeta de la
 pendiente hasta el labio. Los demás módulos se encadenan por detrás y se encajan **desde arriba**, hasta un tope:
@@ -40,6 +44,9 @@ Ver la [comprobación de choques y accesos](docs/verificacion.md).
 3. [Montaje, cableado y materiales](docs/03_montaje.md)
 4. [Verificación de choques y accesos](docs/verificacion.md)
 5. [Atribución y licencias](ATTRIBUTION.md)
+
+Para preparar la electrónica en la batería BricoHams actual, ver la
+[comprobación de envolventes de BMS y cargador](docs/03_montaje.md#preparar-la-electrónica-para-la-batería-bricohams-actual).
 
 ## Regenerar las piezas
 
